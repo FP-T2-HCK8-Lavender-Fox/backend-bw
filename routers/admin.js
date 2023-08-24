@@ -5,10 +5,10 @@ const adminController = require('../controllers/adminController');
 admin
   .get('/admin', adminController.getAllAdmin)
   .get('/admin/:id', adminController.getAdminById)
-  .post('/admin/register', adminController.register)
-  .post('/admin/login', adminController.login)
-  .delete('/admin/:id', adminController.delete)
-  .put('/admin/:id', adminController.update);
+  .post('/admin/register', adminController.registerAdmin)
+  .post('/admin/login', adminController.loginAdmin)
+  .delete('/admin/:id', adminController.deleteAdmin)
+  .put('/admin/:id', adminController.updateAdmin);
 
 
 
