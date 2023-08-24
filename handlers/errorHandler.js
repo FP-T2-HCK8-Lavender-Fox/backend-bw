@@ -33,6 +33,16 @@ module.exports = (err, req, res, next) => {
     case "email must be unique":
     case "username must be unique":
     case "username is required!":
+    case "startDate is required!":
+    case "startDate is required!":
+    case "active status is required!":
+    case "description is required!":
+    case "amount is required!":
+    case "address is required!":
+    case "lattitude is required!":
+    case "longtitude is required!":
+    case "CategoryId is required!":
+    case "pictures is required!":
       res.status(400).json({ message: err.name });
       break;
 
@@ -41,7 +51,7 @@ module.exports = (err, req, res, next) => {
     case "invalid username/password":
       res.status(401).json({ message: err.name });
       break;
-    case "invalid token!":
+    case "require a valid token!":
       res.status(401).json({ message: err.name });
       break;
 
