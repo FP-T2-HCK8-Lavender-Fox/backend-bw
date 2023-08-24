@@ -12,6 +12,17 @@ module.exports = class adminController {
     }
   };
 
+  static getAdminById = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const dataAdmin = await Admin.findByPk(id);
+      res.status(200).json(dataAdmin);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
+
   static register = async (req, res, next) => {
     try {
       const {
@@ -52,6 +63,41 @@ module.exports = class adminController {
       });
       res.status(200).json({ access_token });
 
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
+
+  static delete = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      await Admin.destroy({
+        where: { id }
+      });
+      res.status(200).json({ message: "admin successfully deleted" });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
+
+  static update = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const {
+        username, name, email
+      } = req.body;
+      if (!username) throw { name: "username is required!" };
+      if (!name) throw { name: "name is required!" };
+      if (!email) throw { name: "email is required!" };
+      await Admin.update({
+        username, name, email
+      }, { where: { id } });
+
+      res.status(201).json({
+        message: `admin data successfully edited`
+      });
     } catch (error) {
       console.log(error);
       next(error);

@@ -4,8 +4,11 @@ const adminController = require('../controllers/adminController');
 
 admin
   .get('/admin', adminController.getAllAdmin)
+  .get('/admin/:id', adminController.getAdminById)
   .post('/admin/register', adminController.register)
-  .post('/admin/login', adminController.login);
+  .post('/admin/login', adminController.login)
+  .delete('/admin/:id', adminController.delete)
+  .put('/admin/:id', adminController.update);
 
 
 

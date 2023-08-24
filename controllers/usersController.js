@@ -12,6 +12,17 @@ module.exports = class usersController {
     }
   };
 
+  static getUsersById = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const dataUser = await User.findByPk(id);
+      res.status(200).json(dataUser);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
+
   static register = async (req, res, next) => {
     try {
       const {
@@ -54,6 +65,45 @@ module.exports = class usersController {
       });
       res.status(200).json({ access_token });
 
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
+
+  static delete = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      await User.destroy({
+        where: { id }
+      });
+      res.status(200).json({ message: "users successfully deleted" });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
+
+  static update = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const {
+        name, gender, birthDate, email, phoneNumber, address, ktpId
+      } = req.body;
+      if (!name) throw { name: "name is required!" };
+      if (!gender) throw { name: "gender is required!" };
+      if (!birthDate) throw { name: "birthdate is required!" };
+      if (!email) throw { name: "email is required!" };
+      if (!phoneNumber) throw { name: "phone number is required!" };
+      if (!address) throw { name: "address is required!" };
+      if (!ktpId) throw { name: "ktp id is required!" };
+      await User.update({
+        name, gender, birthDate, email, phoneNumber, address, ktpId
+      }, { where: { id } });
+
+      res.status(201).json({
+        message: `user data successfully edited`
+      });
     } catch (error) {
       console.log(error);
       next(error);
