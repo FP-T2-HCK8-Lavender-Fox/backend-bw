@@ -1,4 +1,4 @@
-const { Image } = require("../models");
+const { Image, Event } = require("../models");
 
 module.exports = class imageController {
   static getAllImage = async (req, res, next) => {
@@ -24,12 +24,24 @@ module.exports = class imageController {
 
   static postImage = async (req, res, next) => {
     try {
+      const { event_id } = req.params;
       const { imageUrl } = req.body;
       if (!imageUrl) throw { name: "imageUrl is required!" };
-      await Category.create({ imageUrl });
+      const data = await Image.create({ imageUrl });
+
+      await Event.update({
+        ImageId: data.id
+      }, {
+        where: {
+          id: event_id
+        }
+      });
+
       res.status(201).json({
         message: `images successfully posted`
       });
+
+
     } catch (error) {
       console.log(error);
       next(error);
