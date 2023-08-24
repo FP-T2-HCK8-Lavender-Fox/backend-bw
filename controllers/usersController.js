@@ -12,7 +12,7 @@ module.exports = class usersController {
     }
   };
 
-  static getUsersById = async (req, res, next) => {
+  static getUserById = async (req, res, next) => {
     try {
       const { id } = req.params;
       const dataUser = await User.findByPk(id);
@@ -23,7 +23,7 @@ module.exports = class usersController {
     }
   };
 
-  static register = async (req, res, next) => {
+  static registerUser = async (req, res, next) => {
     try {
       const {
         name, gender, birthDate, email, password, phoneNumber, address, ktpId
@@ -48,7 +48,7 @@ module.exports = class usersController {
     }
   };
 
-  static login = async (req, res, next) => {
+  static loginUser = async (req, res, next) => {
     try {
       const { email, password, } = req.body;
       if (!email) throw { name: "email is required!" };
@@ -71,7 +71,7 @@ module.exports = class usersController {
     }
   };
 
-  static delete = async (req, res, next) => {
+  static deleteUser = async (req, res, next) => {
     try {
       const { id } = req.params;
       await User.destroy({
@@ -84,7 +84,7 @@ module.exports = class usersController {
     }
   };
 
-  static update = async (req, res, next) => {
+  static updateUser = async (req, res, next) => {
     try {
       const { id } = req.params;
       const {

@@ -23,7 +23,7 @@ module.exports = class adminController {
     }
   };
 
-  static register = async (req, res, next) => {
+  static registerAdmin = async (req, res, next) => {
     try {
       const {
         username, name, email, password
@@ -44,7 +44,7 @@ module.exports = class adminController {
     }
   };
 
-  static login = async (req, res, next) => {
+  static loginAdmin = async (req, res, next) => {
     try {
       const { username, password, } = req.body;
       if (!password) throw { name: "password is required!" };
@@ -69,7 +69,7 @@ module.exports = class adminController {
     }
   };
 
-  static delete = async (req, res, next) => {
+  static deleteAdmin = async (req, res, next) => {
     try {
       const { id } = req.params;
       await Admin.destroy({
@@ -82,7 +82,7 @@ module.exports = class adminController {
     }
   };
 
-  static update = async (req, res, next) => {
+  static updateAdmin = async (req, res, next) => {
     try {
       const { id } = req.params;
       const {
