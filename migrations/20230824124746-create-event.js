@@ -24,7 +24,6 @@ module.exports = {
       active: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: true
       },
       description: {
         type: Sequelize.TEXT,
@@ -33,7 +32,6 @@ module.exports = {
       amount: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        defaultValue: 0
       },
       address: {
         type: Sequelize.STRING,
