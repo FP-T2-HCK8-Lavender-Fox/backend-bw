@@ -13,6 +13,9 @@ module.exports = (err, req, res, next) => {
     if (err.errors[0].message === "email must be unique") {
       err.name = "email must be unique";
     }
+    if (err.errors[0].message === "username must be unique") {
+      err.name = "username must be unique";
+    }
   }
   //!handle error dari users
   //!400
@@ -28,11 +31,14 @@ module.exports = (err, req, res, next) => {
     case "minimum password length is 7!":
     case "Invalid email format!":
     case "email must be unique":
+    case "username must be unique":
+    case "username is required!":
       res.status(400).json({ message: err.name });
       break;
 
     //!401
     case "invalid email/password":
+    case "invalid username/password":
       res.status(401).json({ message: err.name });
       break;
     case "invalid token!":
