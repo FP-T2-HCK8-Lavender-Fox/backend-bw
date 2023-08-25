@@ -27,21 +27,14 @@ module.exports = class imageController {
       const { event_id } = req.params;
       const { imageUrl } = req.body;
       if (!imageUrl) throw { name: "imageUrl is required!" };
-      const data = await Image.create({ imageUrl });
-
-      await Event.update({
-        ImageId: data.id
-      }, {
-        where: {
-          id: event_id
-        }
+      await Image.create({
+        imageUrl,
+        EventId: event_id
       });
 
       res.status(201).json({
         message: `images successfully posted`
       });
-
-
     } catch (error) {
       console.log(error);
       next(error);

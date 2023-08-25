@@ -49,16 +49,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      ImageId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Images',
-          key: 'id',
-          onDelete: 'CASCASE',
-          onUpdate: 'CASCADE'
-        },
-
-      },
       CategoryId: {
         type: Sequelize.INTEGER,
         references: {

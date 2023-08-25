@@ -12,6 +12,13 @@ module.exports = {
       imageUrl: {
         type: Sequelize.STRING
       },
+      EventId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Events',
+          key: 'id'
+        }
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

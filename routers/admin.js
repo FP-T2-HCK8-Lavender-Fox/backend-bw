@@ -5,10 +5,10 @@ const adminAuth = require("../middlewares/adminAuth");
 
 
 admin
+  .post('/admin/register', adminController.registerAdmin)
+  .post('/admin/login', adminController.loginAdmin)
   .get('/admin', adminAuth, adminController.getAllAdmin)
   .get('/admin/:id', adminAuth, adminController.getAdminById)
-  .post('/admin/register', adminAuth, adminController.registerAdmin)
-  .post('/admin/login', adminAuth, adminController.loginAdmin)
   .delete('/admin/:id', adminAuth, adminController.deleteAdmin)
   .put('/admin/:id', adminAuth, adminController.updateAdmin);
 
