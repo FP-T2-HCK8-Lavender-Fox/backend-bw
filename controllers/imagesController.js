@@ -3,7 +3,13 @@ const { Image, Event } = require("../models");
 module.exports = class imageController {
   static getAllImage = async (req, res, next) => {
     try {
-      const images = await Image.findAll();
+      const images = await Image.findAll({
+        include: [
+          {
+            model: Event,
+          },
+        ]
+      });
       res.status(200).json(images);
     } catch (error) {
       console.log(error);
@@ -14,7 +20,13 @@ module.exports = class imageController {
   static getByImageId = async (req, res, next) => {
     try {
       const { id } = req.params;
-      const image = await Image.findByPk(id);
+      const image = await Image.findByPk(id, {
+        include: [
+          {
+            model: Event,
+          },
+        ]
+      });
       res.status(200).json(image);
     } catch (error) {
       console.log(error);

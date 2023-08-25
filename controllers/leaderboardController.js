@@ -1,9 +1,19 @@
-const { Leaderboard } = require("../models");
+const { Leaderboard, Event, User } = require("../models");
 
 module.exports = class leaderboardController {
   static getAllLeaderboards = async (req, res, next) => {
     try {
-      const dataLeaderboards = await Leaderboard.findAll();
+      const dataLeaderboards = await Leaderboard.findAll({
+        include: [
+          {
+            model: User,
+            attributes: { exclude: ['password'] }
+          },
+          {
+            model: Event
+          },
+        ]
+      });
       res.status(200).json(dataLeaderboards);
     } catch (error) {
       console.log(error);
@@ -14,7 +24,18 @@ module.exports = class leaderboardController {
   static getAllLeaderboardById = async (req, res, next) => {
     try {
       const { id } = req.params;
-      const dataLeaderboard = await Leaderboard.findByPk(id);
+      const dataLeaderboard = await Leaderboard.findByPk(id,
+        {
+          include: [
+            {
+              model: User,
+              attributes: { exclude: ['password'] }
+            },
+            {
+              model: Event
+            },
+          ]
+        });
       res.status(200).json(dataLeaderboard);
     } catch (error) {
       console.log(error);
