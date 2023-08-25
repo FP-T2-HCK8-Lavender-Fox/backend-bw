@@ -46,7 +46,7 @@ module.exports = class adminController {
 
   static loginAdmin = async (req, res, next) => {
     try {
-      const { username, password, } = req.body;
+      const { username, password } = req.body;
       if (!password) throw { name: "password is required!" };
       if (!username) throw { name: "username is required!" };
 
