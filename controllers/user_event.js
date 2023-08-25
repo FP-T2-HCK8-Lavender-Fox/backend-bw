@@ -7,7 +7,7 @@ module.exports = class userEventController {
         include: [
           {
             model: User,
-            attributes: { exclude: ['password'] }
+            attributes: { exclude: ["password"] },
           },
           {
             model: Event,
@@ -17,11 +17,11 @@ module.exports = class userEventController {
               },
               {
                 model: Admin,
-                attributes: { exclude: ['password'] }
-              }
-            ]
-          }
-        ]
+                attributes: { exclude: ["password"] },
+              },
+            ],
+          },
+        ],
       });
       res.status(200).json(dataEvents);
     } catch (error) {
@@ -37,7 +37,7 @@ module.exports = class userEventController {
         include: [
           {
             model: User,
-            attributes: { exclude: ['password'] }
+            attributes: { exclude: ["password"] },
           },
           {
             model: Event,
@@ -47,11 +47,11 @@ module.exports = class userEventController {
               },
               {
                 model: Admin,
-                attributes: { exclude: ['password'] }
-              }
-            ]
-          }
-        ]
+                attributes: { exclude: ["password"] },
+              },
+            ],
+          },
+        ],
       });
       res.status(200).json(dataEvent);
     } catch (error) {
@@ -60,16 +60,15 @@ module.exports = class userEventController {
     }
   };
 
-
   static addEvent = async (req, res, next) => {
     try {
       const { event_id } = req.params;
       await User_Event.create({
         UserId: req.user.id,
-        EventId: event_id
+        EventId: event_id,
       });
       res.status(201).json({
-        message: `event successfully added`
+        message: `event successfully added`,
       });
     } catch (error) {
       console.log(error);
@@ -81,7 +80,7 @@ module.exports = class userEventController {
     try {
       const { id } = req.params;
       await User_Event.destroy({
-        where: { id }
+        where: { id },
       });
       res.status(200).json({ message: "event successfully deleted" });
     } catch (error) {
@@ -89,5 +88,4 @@ module.exports = class userEventController {
       next(error);
     }
   };
-
 };

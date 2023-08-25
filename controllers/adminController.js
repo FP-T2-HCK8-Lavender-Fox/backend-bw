@@ -16,7 +16,11 @@ module.exports = class adminController {
     try {
       const { id } = req.params;
       const dataAdmin = await Admin.findByPk(id);
-      res.status(200).json(dataAdmin);
+      res.status(200).json({
+        username: dataAdmin.username,
+        name: dataAdmin.name,
+        email: dataAdmin.email,
+      });
     } catch (error) {
       console.log(error);
       next(error);
@@ -25,18 +29,19 @@ module.exports = class adminController {
 
   static registerAdmin = async (req, res, next) => {
     try {
-      const {
-        username, name, email, password
-      } = req.body;
+      const { username, name, email, password } = req.body;
       if (!username) throw { name: "username is required!" };
       if (!name) throw { name: "name is required!" };
       if (!email) throw { name: "email is required!" };
       if (!password) throw { name: "password is required!" };
       const dataAdmin = await Admin.create({
-        username, name, email, password
+        username,
+        name,
+        email,
+        password,
       });
       res.status(201).json({
-        message: `${dataAdmin.username} successfully registered`
+        message: `${dataAdmin.username} successfully registered`,
       });
     } catch (error) {
       console.log(error);
@@ -51,7 +56,7 @@ module.exports = class adminController {
       if (!username) throw { name: "username is required!" };
 
       const checkAdmin = await Admin.findOne({
-        where: { username }
+        where: { username },
       });
       if (!checkAdmin) throw { name: "invalid username/password" };
       const checkPassword = verifPassword(password, checkAdmin.password);
@@ -59,10 +64,9 @@ module.exports = class adminController {
       const access_token = signToken({
         id: checkAdmin.id,
         username: checkAdmin.username,
-        email: checkAdmin.email
+        email: checkAdmin.email,
       });
       res.status(200).json({ access_token });
-
     } catch (error) {
       console.log(error);
       next(error);
@@ -73,7 +77,7 @@ module.exports = class adminController {
     try {
       const { id } = req.params;
       await Admin.destroy({
-        where: { id }
+        where: { id },
       });
       res.status(200).json({ message: "admin successfully deleted" });
     } catch (error) {
@@ -85,18 +89,21 @@ module.exports = class adminController {
   static updateAdmin = async (req, res, next) => {
     try {
       const { id } = req.params;
-      const {
-        username, name, email
-      } = req.body;
+      const { username, name, email } = req.body;
       if (!username) throw { name: "username is required!" };
       if (!name) throw { name: "name is required!" };
       if (!email) throw { name: "email is required!" };
-      await Admin.update({
-        username, name, email
-      }, { where: { id } });
+      await Admin.update(
+        {
+          username,
+          name,
+          email,
+        },
+        { where: { id } }
+      );
 
       res.status(201).json({
-        message: `admin data successfully edited`
+        message: `admin data successfully edited`,
       });
     } catch (error) {
       console.log(error);
