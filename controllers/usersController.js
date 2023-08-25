@@ -109,21 +109,4 @@ module.exports = class usersController {
       next(error);
     }
   };
-
-  static addEvent = async (req, res, next) => {
-    try {
-      const { id } = req.params;
-
-      await User_Event.create({
-        UserId: req.user.id,
-        EventId: id
-      });
-      res.status(201).json({
-        message: `event successfully added`
-      });
-    } catch (error) {
-      console.log(error);
-      next(error);
-    }
-  };
 };

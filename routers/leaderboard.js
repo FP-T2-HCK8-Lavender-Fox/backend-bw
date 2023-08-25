@@ -4,8 +4,8 @@ const leaderboardController = require('../controllers/leaderboardController');
 const leaderboard = express.Router();
 
 leaderboard
-  .get('/leaderboards', adminAuth, leaderboardController.getAllLeaderboards)
-  .get('/leaderboards/:id', adminAuth, leaderboardController.getAllLeaderboardById)
+  .get('/leaderboards', leaderboardController.getAllLeaderboards)
+  .get('/leaderboards/:id', leaderboardController.getAllLeaderboardById)
   .post('/leaderboards/:eventId', adminAuth, leaderboardController.postLeaderboard)
   .delete('/leaderboards/:id', adminAuth, leaderboardController.deleteLeaderboard);
 

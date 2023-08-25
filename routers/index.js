@@ -5,7 +5,8 @@ const adminRouter = require('./admin');
 const categoryRouter = require('./category');
 const imagesRouter = require('./images');
 const eventRouter = require('./event');
-const leaderboard = require('./leaderboard');
+const leaderboardRouter = require('./leaderboard');
+const userEventRouter = require('./user_event');
 
 router
   .use(userRouter)
@@ -13,7 +14,8 @@ router
   .use(categoryRouter)
   .use(imagesRouter)
   .use(eventRouter)
-  .use(leaderboard);
+  .use(leaderboardRouter)
+  .use(userEventRouter);
 
 module.exports = router
 

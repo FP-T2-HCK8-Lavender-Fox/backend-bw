@@ -1,9 +1,22 @@
-const { Event } = require("../models");
+const { Event, Admin, Category, Image } = require("../models");
 
 module.exports = class eventController {
   static getAllEvents = async (req, res, next) => {
     try {
-      const dataEvents = await Event.findAll();
+      const dataEvents = await Event.findAll({
+        include: [
+          {
+            model: Admin,
+            attributes: { exclude: ['password'] }
+          },
+          {
+            model: Category
+          },
+          {
+            model: Image
+          }
+        ]
+      });
       res.status(200).json(dataEvents);
     } catch (error) {
       console.log(error);
@@ -14,7 +27,20 @@ module.exports = class eventController {
   static getEventById = async (req, res, next) => {
     try {
       const { id } = req.params;
-      const dataEvent = await Event.findByPk(id);
+      const dataEvent = await Event.findByPk(id, {
+        include: [
+          {
+            model: Admin,
+            attributes: { exclude: ['password'] }
+          },
+          {
+            model: Category
+          },
+          {
+            model: Image
+          }
+        ]
+      });
       res.status(200).json(dataEvent);
     } catch (error) {
       console.log(error);
