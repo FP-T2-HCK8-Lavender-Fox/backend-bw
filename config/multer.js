@@ -7,7 +7,7 @@ const filterImage = (req, file, cb) => {
   ) {
     cb(null, true);
   } else {
-    cb(null, false);
+    cb(null, true);
   }
 };
 

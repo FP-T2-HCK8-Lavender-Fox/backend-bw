@@ -15,8 +15,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Checkpoint.init({
-    lat: DataTypes.STRING,
-    long: DataTypes.STRING,
+    lat: {
+      type: DataTypes.DECIMAL(9, 6)
+    },
+    long: {
+      type: DataTypes.DECIMAL(9, 6)
+    },
     question: DataTypes.STRING,
     trueAnswer: DataTypes.STRING,
     wrongAnswerOne: DataTypes.STRING,

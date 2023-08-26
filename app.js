@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(
   multer({
     fileFilter: fileStorage.filterImage,
-  }).single("avatar")
+  }).single("pics")
 );
 
 app.use(router);
