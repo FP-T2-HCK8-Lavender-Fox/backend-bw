@@ -11,36 +11,28 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
-        allowNull: false
       },
       gender: {
         type: Sequelize.STRING,
-        allowNull: false
       },
       birthDate: {
         type: Sequelize.STRING,
-        allowNull: false
       },
       email: {
         type: Sequelize.STRING,
-        allowNull: false,
         unique: true
       },
       password: {
         type: Sequelize.STRING,
-        allowNull: false
       },
       phoneNumber: {
         type: Sequelize.STRING,
-        allowNull: false
       },
       address: {
         type: Sequelize.STRING,
-        allowNull: false
       },
       ktpId: {
         type: Sequelize.STRING,
-        allowNull: false
       },
       createdAt: {
         allowNull: false,

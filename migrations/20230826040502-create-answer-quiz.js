@@ -2,35 +2,29 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('User_Events', {
+    await queryInterface.createTable('AnswerQuizzes', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      trueOrFalse: {
+        type: Sequelize.BOOLEAN
+      },
       UserId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
         references: {
           model: 'Users',
-          key: 'id',
-          onDelete: 'CASCASE',
-          onUpdate: 'CASCADE'
+          key: 'id'
         }
       },
-      EventId: {
+      CheckpointId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
         references: {
-          model: 'Events',
-          key: 'id',
-          onDelete: 'CASCASE',
-          onUpdate: 'CASCADE'
+          model: 'Checkpoints',
+          key: 'id'
         }
-      },
-      point: {
-        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
@@ -43,6 +37,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('User_Events');
+    await queryInterface.dropTable('AnswerQuizzes');
   }
 };
