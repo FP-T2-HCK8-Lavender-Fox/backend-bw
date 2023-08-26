@@ -59,7 +59,7 @@ module.exports = class usersController {
         id: checkUser.id,
         email: checkUser.email
       });
-      res.status(200).json({ access_token });
+      res.status(200).json({ access_token, name: checkUser.name });
 
     } catch (error) {
       console.log(error);
