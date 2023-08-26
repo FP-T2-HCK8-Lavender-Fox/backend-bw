@@ -7,6 +7,7 @@ const user_event = express.Router();
 user_event
   .get('/users-event', userEventController.getAllEvents)
   .get('/users-event/:id', userEventController.getUserEventById)
+  .get('/users-event/users/:id', usersAuth, userEventController.getEventByUSersId)
   .post('/users-event/:event_id', usersAuth, userEventController.addEvent)
   .delete('/users-event/:id', adminAuth, userEventController.deleteEvent);
 
