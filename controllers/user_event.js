@@ -124,6 +124,7 @@ module.exports = class userEventController {
     } catch (error) {
       console.log(error);
       next(error);
+      //check
     }
   };
 };
