@@ -61,7 +61,7 @@ module.exports = class adminController {
         username: checkAdmin.username,
         email: checkAdmin.email
       });
-      res.status(200).json({ access_token });
+      res.status(200).json({ access_token, username: checkAdmin.username });
 
     } catch (error) {
       console.log(error);
