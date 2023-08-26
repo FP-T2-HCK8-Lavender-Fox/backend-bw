@@ -1,4 +1,12 @@
-const { Event, Admin, Category, Image, sequelize, Checkpoint } = require("../models");
+const imagekit = require("../config/imagekit");
+const {
+  Event,
+  Admin,
+  Category,
+  Image,
+  sequelize,
+  Checkpoint,
+} = require("../models");
 
 module.exports = class eventController {
   static getAllEvents = async (req, res, next) => {
@@ -7,15 +15,15 @@ module.exports = class eventController {
         include: [
           {
             model: Admin,
-            attributes: { exclude: ['password'] }
+            attributes: { exclude: ["password"] },
           },
           {
-            model: Category
+            model: Category,
           },
           {
-            model: Image
-          }
-        ]
+            model: Image,
+          },
+        ],
       });
       res.status(200).json(dataEvents);
     } catch (error) {
@@ -31,15 +39,15 @@ module.exports = class eventController {
         include: [
           {
             model: Admin,
-            attributes: { exclude: ['password'] }
+            attributes: { exclude: ["password"] },
           },
           {
-            model: Category
+            model: Category,
           },
           {
-            model: Image
-          }
-        ]
+            model: Image,
+          },
+        ],
       });
       res.status(200).json(dataEvent);
     } catch (error) {
@@ -52,8 +60,17 @@ module.exports = class eventController {
     const t = await sequelize.transaction();
     try {
       const {
-        name, startDate, endDate, active, description, amount, address, lat,
-        long, pics, CategoryId, checkpoints
+        name,
+        startDate,
+        endDate,
+        active,
+        description,
+        amount,
+        address,
+        lat,
+        long,
+        CategoryId,
+        checkpoints,
       } = req.body;
       if (!name) throw { name: "name is required!" };
       if (!startDate) throw { name: "startDate is required!" };
@@ -65,12 +82,33 @@ module.exports = class eventController {
       if (!lat) throw { name: "lattitude is required!" };
       if (!long) throw { name: "longtitude is required!" };
       if (!CategoryId) throw { name: "CategoryId is required!" };
-      if (!pics) throw { name: "pictures is required!" };
+      if (!req.file) throw { name: "pictures is required!" };
       if (!checkpoints.length === 3) throw { name: "Checkpoints is required!" };
-      const dataEvent = await Event.create({
-        name, startDate, endDate, active, description, amount, address, lat,
-        long, pics, CategoryId, AdminId: req.user.id
-      }, { transaction: t });
+
+      const fileBuffer = Buffer.from(req.file.buffer).toString("base64");
+
+      const { url } = await imagekit.upload({
+        file: fileBuffer,
+        fileName: new Date().getTime() + "-" + req.file.originalname,
+      });
+
+      const dataEvent = await Event.create(
+        {
+          name,
+          startDate,
+          endDate,
+          active,
+          description,
+          amount,
+          address,
+          lat,
+          long,
+          pics: url,
+          CategoryId,
+          AdminId: req.user.id,
+        },
+        { transaction: t }
+      );
 
       const flagEventId = await checkpoints.map((e) => {
         e.EventId = dataEvent.id;
@@ -80,9 +118,8 @@ module.exports = class eventController {
 
       await t.commit();
       res.status(201).json({
-        message: `event and checkpoints successfully created`
+        message: `event and checkpoints successfully created`,
       });
-
     } catch (error) {
       console.log(error);
       await t.rollback();
@@ -94,8 +131,17 @@ module.exports = class eventController {
     try {
       const { id } = req.params;
       const {
-        name, startDate, endDate, active, description, amount, address, lat,
-        long, pics, CategoryId
+        name,
+        startDate,
+        endDate,
+        active,
+        description,
+        amount,
+        address,
+        lat,
+        long,
+        pics,
+        CategoryId,
       } = req.body;
       if (!name) throw { name: "name is required!" };
       if (!startDate) throw { name: "startDate is required!" };
@@ -108,12 +154,25 @@ module.exports = class eventController {
       if (!long) throw { name: "longtitude is required!" };
       if (!CategoryId) throw { name: "CategoryId is required!" };
       if (!pics) throw { name: "pictures is required!" };
-      await Event.update({
-        name, startDate, endDate, active, description, amount, address, lat,
-        long, pics, CategoryId, AdminId: req.user.id
-      }, { where: { id } });
+      await Event.update(
+        {
+          name,
+          startDate,
+          endDate,
+          active,
+          description,
+          amount,
+          address,
+          lat,
+          long,
+          pics,
+          CategoryId,
+          AdminId: req.user.id,
+        },
+        { where: { id } }
+      );
       res.status(201).json({
-        message: `event successfully edited`
+        message: `event successfully edited`,
       });
     } catch (error) {
       console.log(error);
@@ -125,7 +184,7 @@ module.exports = class eventController {
     try {
       const { id } = req.params;
       await Event.destroy({
-        where: { id }
+        where: { id },
       });
       res.status(200).json({ message: "event successfully deleted" });
     } catch (error) {
@@ -133,5 +192,4 @@ module.exports = class eventController {
       next(error);
     }
   };
-
 };
