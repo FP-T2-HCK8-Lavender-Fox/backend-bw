@@ -20,9 +20,6 @@ module.exports = class eventController {
           {
             model: Category,
           },
-          {
-            model: Image,
-          },
         ],
       });
       res.status(200).json(dataEvents);
@@ -43,9 +40,6 @@ module.exports = class eventController {
           },
           {
             model: Category,
-          },
-          {
-            model: Image,
           },
         ],
       });
@@ -84,7 +78,6 @@ module.exports = class eventController {
       if (!CategoryId) throw { name: "CategoryId is required!" };
       if (!req.file) throw { name: "pictures is required!" };
       if (!checkpoints.length === 3) throw { name: "Checkpoints is required!" };
-
       const fileBuffer = Buffer.from(req.file.buffer).toString("base64");
 
       const { url } = await imagekit.upload({
@@ -109,8 +102,8 @@ module.exports = class eventController {
         },
         { transaction: t }
       );
-
-      const flagEventId = await checkpoints.map((e) => {
+      const newCheckpointArray = await JSON.parse(checkpoints);
+      const flagEventId = await newCheckpointArray.map((e) => {
         e.EventId = dataEvent.id;
         return e;
       });
