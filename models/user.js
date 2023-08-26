@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       User.belongsToMany(models.Event, { through: models.User_Event, foreignKey: 'UserId' });
       User.hasMany(models.Leaderboard, { foreignKey: 'UserId' });
+      User.hasMany(models.AnswerQuiz, { foreignKey: 'UserId' });
     }
   }
   User.init({
@@ -43,15 +44,15 @@ module.exports = (sequelize, DataTypes) => {
     },
     birthDate: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: {
-          msg: "birthdate is required!"
-        },
-        notEmpty: {
-          msg: "birthdate is required!"
-        }
-      }
+      // allowNull: false,
+      // validate: {
+      //   notEmpty: {
+      //     msg: "birthdate is required!"
+      //   },
+      //   notEmpty: {
+      //     msg: "birthdate is required!"
+      //   }
+      // }
     },
     email: {
       type: DataTypes.STRING,
@@ -86,39 +87,39 @@ module.exports = (sequelize, DataTypes) => {
     },
     phoneNumber: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: {
-          msg: "phone number is required!"
-        },
-        notEmpty: {
-          msg: "phone number is required!"
-        }
-      }
+      // allowNull: false,
+      // validate: {
+      //   notEmpty: {
+      //     msg: "phone number is required!"
+      //   },
+      //   notEmpty: {
+      //     msg: "phone number is required!"
+      //   }
+      // }
     },
     address: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: {
-          msg: "address is required!"
-        },
-        notEmpty: {
-          msg: "address is required!"
-        }
-      }
+      // allowNull: false,
+      // validate: {
+      //   notEmpty: {
+      //     msg: "address is required!"
+      //   },
+      //   notEmpty: {
+      //     msg: "address is required!"
+      //   }
+      // }
     },
     ktpId: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: {
-          msg: "ktp id is required!"
-        },
-        notEmpty: {
-          msg: "ktp id is required!"
-        }
-      }
+      // allowNull: false,
+      // validate: {
+      //   notEmpty: {
+      //     msg: "ktp id is required!"
+      //   },
+      //   notEmpty: {
+      //     msg: "ktp id is required!"
+      //   }
+      // }
     }
   }, {
     sequelize,

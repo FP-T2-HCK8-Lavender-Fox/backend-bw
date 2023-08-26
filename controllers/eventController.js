@@ -1,4 +1,4 @@
-const { Event, Admin, Category, Image } = require("../models");
+const { Event, Admin, Category, Image, sequelize, Checkpoint } = require("../models");
 
 module.exports = class eventController {
   static getAllEvents = async (req, res, next) => {
@@ -49,10 +49,11 @@ module.exports = class eventController {
   };
 
   static postEvent = async (req, res, next) => {
+    const t = await sequelize.transaction();
     try {
       const {
         name, startDate, endDate, active, description, amount, address, lat,
-        long, pics, CategoryId
+        long, pics, CategoryId, checkpoints
       } = req.body;
       if (!name) throw { name: "name is required!" };
       if (!startDate) throw { name: "startDate is required!" };
@@ -65,15 +66,26 @@ module.exports = class eventController {
       if (!long) throw { name: "longtitude is required!" };
       if (!CategoryId) throw { name: "CategoryId is required!" };
       if (!pics) throw { name: "pictures is required!" };
-      await Event.create({
+      if (!checkpoints.length === 3) throw { name: "Checkpoints is required!" };
+      const dataEvent = await Event.create({
         name, startDate, endDate, active, description, amount, address, lat,
         long, pics, CategoryId, AdminId: req.user.id
+      }, { transaction: t });
+
+      const flagEventId = await checkpoints.map((e) => {
+        e.EventId = dataEvent.id;
+        return e;
       });
+      await Checkpoint.bulkCreate(flagEventId, { transaction: t });
+
+      await t.commit();
       res.status(201).json({
-        message: `event successfully created`
+        message: `event and checkpoints successfully created`
       });
+
     } catch (error) {
       console.log(error);
+      await t.rollback();
       next(error);
     }
   };

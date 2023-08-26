@@ -26,18 +26,14 @@ module.exports = class usersController {
   static registerUser = async (req, res, next) => {
     try {
       const {
-        name, gender, birthDate, email, password, phoneNumber, address, ktpId
+        name, gender, email, password,
       } = req.body;
       if (!name) throw { name: "name is required!" };
       if (!gender) throw { name: "gender is required!" };
-      if (!birthDate) throw { name: "birthdate is required!" };
       if (!email) throw { name: "email is required!" };
       if (!password) throw { name: "password is required!" };
-      if (!phoneNumber) throw { name: "phone number is required!" };
-      if (!address) throw { name: "address is required!" };
-      if (!ktpId) throw { name: "ktp id is required!" };
       const dataUsers = await User.create({
-        name, gender, birthDate, email, password, phoneNumber, address, ktpId
+        name, gender, email, password,
       });
       res.status(201).json({
         message: `${dataUsers.email} successfully registered`
