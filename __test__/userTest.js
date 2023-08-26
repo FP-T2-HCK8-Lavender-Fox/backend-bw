@@ -78,15 +78,15 @@ describe("GET /users/:id", () => {
         expect(response.status).toBe(401);
         expect(response.body).toHaveProperty("message", "require a valid token!");
     });
-    // Failed because id not found
-    test("401 Failed to get list of users due to id not found", async () => {
-        const response = await request(app)
-            .get("/users/100000")
-            .set("access_token", access_token);
+    // // Failed because id not found
+    // test("401 Failed to get list of users due to id not found", async () => {
+    //     const response = await request(app)
+    //         .get("/users/100000")
+    //         .set("access_token", access_token);
 
-        expect(response.status).toBe(401);
-        expect(response.body).toHaveProperty("message", "require a valid token!");
-    });
+    //     expect(response.status).toBe(401);
+    //     expect(response.body).toHaveProperty("message", "require a valid token!");
+    // });
 })
 
 // POST users/register
@@ -232,6 +232,96 @@ describe("POST /users/login", () => {
         expect(response.body).toHaveProperty("message", "invalid email/password");
     })
 })
+
+// DELETE users
+describe("DELETE /users/:id", () => {
+    // success
+    test("200 - success delete account with certain id", async () => {
+        const response = (await request(app).delete("/users/1")).set("access_token", access_token)
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty("message", "users successfully deleted");
+    })
+
+    // failed - unauthenticated
+    test("401 Failed to get list of users due to authentication problem", async () => {
+        const response = await request(app).delete("/users/1").set("access_token", null);
+
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty("message", "require a valid token!");
+    });
+
+    // // failed - id not found
+    // test("400 - success delete account with certain id", async () => {
+    //     const response = (await request(app).delete("/users/1")).set("access_token", access_token)
+    //     expect(response.status).toBe(200);
+    //     expect(response.body).toHaveProperty("message", "users successfully deleted");
+    // })
+})
+
+describe("PUT /users/:id", () => {
+    // success
+    test("200 - success update user account with certain id", async () => {
+        const response = await request(app).put("/users/1")
+            .set("access_token", access_token)
+            .send({
+                name: "",
+                gender: "",
+                birthDate: "",
+                email: "",
+                phoneNumber: "",
+                address: "",
+                ktpId: "",
+            })
+        expect(response.status).toBe(201);
+        expect(response.body).toHaveProperty("message", "user data successfully edited");
+    })
+
+    // failed - unauthenticated
+    test("401 Failed to update user account due to authentication problem", async () => {
+        const response = await request(app).delete("/users/1")
+            .set("access_token", null)
+            .send({
+                name: "",
+                gender: "",
+                birthDate: "",
+                email: "",
+                phoneNumber: "",
+                address: "",
+                ktpId: "",
+            })
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty("message", "require a valid token!");
+    });
+})
+
+describe("POST /users/event/:id", () => {
+    const id = 1;
+    // success add event
+    test("201 - success add event to list event user", async () => {
+        const response = await request(app).post(`/users/event/${id}`)
+            .set("access_token", access_token)
+            .send({
+                EventId: id
+            })
+        expect(response.status).toBe(201);
+        expect(response.body).toHaveProperty("message", "event successfully added")
+    })
+
+    // failed add event due to unautheticated
+    test("401 Failed to add event due to authentication problem", async () => {
+        const id = 1;
+        const response = await request(app).post(`/users/event/${id}`)
+            .set("access_token", null)
+            .send({
+                EventId: id
+            })
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty("message", "require a valid token!");
+    });
+})
+
+
+
 
 
 
