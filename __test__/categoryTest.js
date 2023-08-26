@@ -90,17 +90,17 @@ describe("POST /categories/", () => {
 })
 
 // DELETE users
-describe("DELETE /users/:id", () => {
+describe("DELETE /categories/:id", () => {
     // success
-    test("200 - success delete account with certain id", async () => {
-        const response = (await request(app).delete("/users/1")).set("access_token", access_token)
+    test("200 - success delete category with certain id", async () => {
+        const response = (await request(app).delete("/categories/1")).set("access_token", access_token)
         expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty("message", "users successfully deleted");
+        expect(response.body).toHaveProperty("message", "category successfully deleted");
     })
 
     // failed - unauthenticated
     test("401 Failed to get list of users due to authentication problem", async () => {
-        const response = await request(app).delete("/users/1").set("access_token", null);
+        const response = await request(app).delete("/categories/1").set("access_token", null);
 
         expect(response.status).toBe(401);
         expect(response.body).toHaveProperty("message", "require a valid token!");
