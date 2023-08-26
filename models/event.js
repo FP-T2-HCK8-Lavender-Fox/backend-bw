@@ -26,8 +26,12 @@ module.exports = (sequelize, DataTypes) => {
     description: DataTypes.TEXT,
     amount: DataTypes.INTEGER,
     address: DataTypes.STRING,
-    lat: DataTypes.STRING,
-    long: DataTypes.STRING,
+    lat: {
+      type: DataTypes.DECIMAL(9, 6)
+    },
+    long: {
+      type: DataTypes.DECIMAL(9, 6)
+    },
     pics: DataTypes.STRING,
     CategoryId: DataTypes.INTEGER,
     AdminId: DataTypes.INTEGER

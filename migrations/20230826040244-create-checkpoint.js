@@ -10,10 +10,10 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       lat: {
-        type: Sequelize.STRING
+        type: Sequelize.DECIMAL(9, 6),
       },
       long: {
-        type: Sequelize.STRING
+        type: Sequelize.DECIMAL(9, 6),
       },
       question: {
         type: Sequelize.STRING
