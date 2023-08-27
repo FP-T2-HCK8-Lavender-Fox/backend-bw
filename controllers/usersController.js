@@ -14,7 +14,7 @@ module.exports = class usersController {
 
   static getUserById = async (req, res, next) => {
     try {
-      const { id } = req.params;
+      const { id } = req.user;
       const dataUser = await User.findByPk(id);
       res.status(200).json(dataUser);
     } catch (error) {
