@@ -45,6 +45,7 @@ module.exports = (err, req, res, next) => {
     case "pictures is required!":
     case "Checkpoints is required!":
     case "Checkpoints must 3!":
+    case "Only Accept 100k":
       res.status(400).json({ message: err.name });
       break;
 
