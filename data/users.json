@@ -1,10 +1,9 @@
 [
     {
-        "id": 1,
         "name": "John Doe",
         "username": "JohnDoe",
         "gender": "Male",
-        "dateOfBirth": "1990-05-15",
+        "birthDate": "1990-05-15",
         "email": "johndoe@example.com",
         "password": "securepassword123",
         "phoneNumber": "123-456-7890",
@@ -12,11 +11,10 @@
         "ktpId": "1234567890123456"
     },
     {
-        "id": 2,
         "name": "Jane Smith",
         "username": "JaneSmith",
         "gender": "Female",
-        "dateOfBirth": "1988-10-20",
+        "birthDate": "1988-10-20",
         "email": "janesmith@example.com",
         "password": "strongpass456",
         "phoneNumber": "987-654-3210",
