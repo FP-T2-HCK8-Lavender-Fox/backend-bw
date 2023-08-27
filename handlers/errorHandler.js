@@ -43,6 +43,8 @@ module.exports = (err, req, res, next) => {
     case "longtitude is required!":
     case "CategoryId is required!":
     case "pictures is required!":
+    case "Checkpoints is required!":
+    case "Checkpoints must 3!":
       res.status(400).json({ message: err.name });
       break;
 
