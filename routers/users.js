@@ -10,7 +10,7 @@ user
   .get('/users', adminAuth, usersController.getAllUsers)
   .get('/users/:id', adminAuth, usersController.getUserById)
   .delete('/users/:id', adminAuth, usersController.deleteUser)
-  .put('/users/:id', adminAuth, usersController.updateUser);
+  .put('/users/:id', usersController.updateUser);
 
 
 
