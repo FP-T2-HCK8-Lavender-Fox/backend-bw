@@ -1,4 +1,11 @@
-const { User_Event, User, Event, Category, Admin, Checkpoint, AnswerQuiz } = require("../models");
+const {
+  User_Event,
+  User, Event,
+  Category,
+  Admin,
+  Checkpoint,
+  AnswerQuiz,
+  sequelize } = require("../models");
 
 module.exports = class userEventController {
   static getAllEvents = async (req, res, next) => {
@@ -62,16 +69,29 @@ module.exports = class userEventController {
 
 
   static addEvent = async (req, res, next) => {
+    //!create 3 answer
+    const t = await sequelize.transaction();
     try {
       const { event_id } = req.params;
+
+      const checkpointsData = await Checkpoint.findAll({ where: { EventId: event_id } });
+      const answerData = await checkpointsData.map(e => {
+        return {
+          UserId: req.user.id,
+          CheckpointId: e.id
+        };
+      });
+      await AnswerQuiz.bulkCreate(answerData, { transaction: t });
       await User_Event.create({
         UserId: req.user.id,
         EventId: event_id
-      });
+      }, { transaction: t });
+      await t.commit();
       res.status(201).json({
         message: `event successfully added`
       });
     } catch (error) {
+      await t.rollback();
       console.log(error);
       next(error);
     }
