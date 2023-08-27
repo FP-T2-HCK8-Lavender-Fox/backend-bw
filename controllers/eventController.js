@@ -77,7 +77,7 @@ module.exports = class eventController {
       if (!long) throw { name: "longtitude is required!" };
       if (!CategoryId) throw { name: "CategoryId is required!" };
       if (!req.file) throw { name: "pictures is required!" };
-      if (!checkpoints.length === 3) throw { name: "Checkpoints is required!" };
+      if (!checkpoints) throw { name: "Checkpoints is required!" };
       const fileBuffer = Buffer.from(req.file.buffer).toString("base64");
 
       const { url } = await imagekit.upload({
@@ -103,6 +103,7 @@ module.exports = class eventController {
         { transaction: t }
       );
       const newCheckpointArray = await JSON.parse(checkpoints);
+      if (newCheckpointArray.length !== 3) throw { name: "Checkpoints must 3!" };
       const flagEventId = await newCheckpointArray.map((e) => {
         e.EventId = dataEvent.id;
         return e;
