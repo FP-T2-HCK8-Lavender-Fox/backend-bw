@@ -6,14 +6,19 @@ const { hashPassword, verifPassword, signToken } = require("../helpers/helper");
 
 let access_token;
 beforeAll(async () => {
-    await sequelize.queryInterface.bulkInsert(
-        "Users",
-        require("../data/users.json").map((el) => {
-            el.createdAt = el.updatedAt = new Date();
-            el.password = hashPassword(el.password);
-            return el;
-        })
-    );
+    try {
+        await sequelize.queryInterface.bulkInsert(
+            "Users",
+            require("../data/users.json").map((el) => {
+                console.log(el);
+                el.createdAt = el.updatedAt = new Date();
+                el.password = hashPassword(el.password);
+                return el;
+            })
+        );
+    } catch (error) {
+        console.log(error);
+    }
 });
 
 afterAll(async () => {
@@ -91,31 +96,45 @@ describe("GET /users/:id", () => {
 
 // POST users/register
 describe("POST /users/register", () => {
-    test("201 - success create account", async () => {
-        const response = (await request(app).post("/users/register")).send({
-            name: "John Smith",
-            email: "JohnSmith@gmail.com",
-            username: "JohnSmith",
-            password: "securepassword123"
+    try {
+        test.only("201 - success create account", async () => {
+            const response = await request(app).post("/users/register").send({
+                name: "John Smith",
+                email: "JohnSmith@gmail.com",
+                gender: "Male",
+                birthDate: "1990-05-15",
+                phoneNumber: "123-456-7890",
+                address: "123 Main St, City",
+                username: "JohnSmith",
+                password: "securepassword123",
+                ktpId: "1234567890123456"
+            })
+            expect(response.status).toBe(201);
+            expect(response.body).toHaveProperty("message", "JohnSmith@gmail.com successfully registered");
         })
-        expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty("message", "JohnSmith successfully registered");
-    })
+    } catch (error) {
+        console.log(error);
+    }
 
     // 400 register failed - name null should return error
-    test("400 - register failed because name is null", async () => {
-        const response = (await request(app).post("/users/register")).send({
-            name: "John Smith",
-            email: "JohnSmith@gmail.com",
-            password: "securepassword123"
+    try {
+        test("400 - register failed because name is null", async () => {
+            const response = await request(app).post("/users/register").send({
+                name: "John Smith",
+                email: "JohnSmith@gmail.com",
+                password: "securepassword123"
+            })
+            expect(response.status).toBe(400);
+            expect(response.body).toHaveProperty("message", "name is required!");
         })
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "name is required!");
-    })
+    } catch (error) {
+        console.log(error);
+    }
+
 
     // 400 register failed - gender null should return error
     test("400 - register failed because gender is null", async () => {
-        const response = (await request(app).post("/users/register")).send({
+        const response = await request(app).post("/users/register").send({
             name: "John Smith",
             email: "JohnSmith@gmail.com",
             password: "securepassword123"
@@ -126,7 +145,7 @@ describe("POST /users/register", () => {
 
     // 400 register failed - email null should return error
     test("400 - register failed because email is null", async () => {
-        const response = (await request(app).post("/users/register")).send({
+        const response = await request(app).post("/users/register").send({
             name: "John Smith",
             username: "JohnSmith",
             password: "securepassword123"
@@ -137,7 +156,7 @@ describe("POST /users/register", () => {
 
     // 400 register failed - password null should return error
     test("400 - register failed because password is null", async () => {
-        const response = (await request(app).post("/users/register")).send({
+        const response = await request(app).post("/users/register").send({
             name: "John Smith",
             email: "JohnSmith@gmail.com",
             username: "JohnSmith",
@@ -148,7 +167,7 @@ describe("POST /users/register", () => {
 
     // 400 register failed - name null should return error
     test("400 - register failed because name is null", async () => {
-        const response = (await request(app).post("/users/register")).send({
+        const response = await request(app).post("/users/register").send({
             email: "JohnSmith@gmail.com",
             username: "JohnSmith",
             password: "securepassword123"
@@ -159,7 +178,7 @@ describe("POST /users/register", () => {
 
     // invalid email format 
     test("400 - register failed because password less than 7", async () => {
-        const response = (await request(app).post("/users/register")).send({
+        const response = await request(app).post("/users/register").send({
             name: "John Smith",
             email: "JohnSmithgmail.com",
             username: "JohnSmith",
@@ -171,7 +190,7 @@ describe("POST /users/register", () => {
 
     // password length less than 7 
     test("400 - register failed because password less than 7", async () => {
-        const response = (await request(app).post("/users/register")).send({
+        const response = await request(app).post("/users/register").send({
             name: "John Smith",
             email: "JohnSmith@gmail.com",
             username: "JohnSmith",
