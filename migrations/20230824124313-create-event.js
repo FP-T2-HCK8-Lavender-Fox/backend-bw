@@ -54,7 +54,7 @@ module.exports = {
         references: {
           model: 'Categories',
           key: 'id',
-          onDelete: 'CASCASE',
+          onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         },
       },
@@ -63,7 +63,7 @@ module.exports = {
         references: {
           model: 'Admins',
           key: 'id',
-          onDelete: 'CASCASE',
+          onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         },
       },
