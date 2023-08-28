@@ -412,6 +412,66 @@ describe("POST /admin/login", () => {
     })
 })
 
+// ADMINS
+describe("GET /admin", () => {
+    // success
+    try {
+        test("200 - success to get list of admins ", async () => {
+            const response = await request(app).get("/admin").set("access_token", access_token_admin)
+
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Object);
+            expect(response.body.length).toBeGreaterThan(0);
+            expect(response.body[0]).toHaveProperty("id", expect.any(Number));
+            expect(response.body[0]).toHaveProperty("name", expect.any(String));
+            expect(response.body[0]).toHaveProperty("username", expect.any(String));
+            expect(response.body[0]).toHaveProperty("email", expect.any(String));
+            expect(response.body[0]).toHaveProperty("password", expect.any(String));
+        })
+    } catch (error) {
+        console.log(error);
+    }
+
+    // failed because access_token null
+    test("401 Failed to get list of admins due to authentication problem", async () => {
+        const response = await request(app)
+            .get("/admin")
+            .set("access_token", null);
+
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty("message", "require a valid token!");
+    });
+})
+
+// GET admin/:id
+describe("GET /admin/:id", () => {
+    try {
+        test("200 - success to get users with certain id", async () => {
+            const response = await request(app).get("/admin/1").set("access_token", access_token_admin)
+
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Object);
+            expect(response.body).toHaveProperty("id", expect.any(Number));
+            expect(response.body).toHaveProperty("name", expect.any(String));
+            expect(response.body).toHaveProperty("email", expect.any(String));
+            expect(response.body).toHaveProperty("username", expect.any(String));
+            expect(response.body).toHaveProperty("password", expect.any(String));
+        })
+    } catch (error) {
+        console.log(error);
+    }
+
+    test("401 Failed to get list of users due to authentication problem", async () => {
+        const response = await request(app)
+            .get("/users/1")
+            .set("access_token", null);
+
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty("message", "require a valid token!");
+    });
+})
+
+
 // GET categories
 describe("GET /categories", () => {
     // success
@@ -737,11 +797,15 @@ describe("GET /users/:id", () => {
 // DELETE users
 describe("DELETE /users/:id", () => {
     // success
-    test("200 - success delete account with certain id", async () => {
-        const response = await request(app).delete("/users/1").set("access_token", access_token_admin)
-        expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty("message", "users successfully deleted");
-    })
+    try {
+        test("200 - success delete account with certain id", async () => {
+            const response = await request(app).delete("/users/1").set("access_token", access_token_admin)
+            expect(response.status).toBe(200);
+            expect(response.body).toHaveProperty("message", "users successfully deleted");
+        })
+    } catch (error) {
+        console.log(error);
+    }
 
     // failed - unauthenticated
     test("401 Failed to get list of users due to authentication problem", async () => {
@@ -761,7 +825,10 @@ describe("PUT /users/:id", () => {
                 name: "John DOE",
                 gender: "Male",
                 email: "johndoe@example.com",
-                password: "securepassword123"
+                birthDate: "2001-12-12",
+                phoneNumber: "08123743839",
+                address: "Jl. street",
+                ktpId: "098792819281"
             })
         expect(response.status).toBe(201);
         expect(response.body).toHaveProperty("message", "user data successfully edited");
