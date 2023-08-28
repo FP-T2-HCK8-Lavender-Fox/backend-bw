@@ -72,35 +72,50 @@ module.exports = class userEventController {
 
   static addEvent = async (req, res, next) => {
     //!create 3 answer
+
     const t = await sequelize.transaction();
     try {
       const { event_id } = req.params;
 
-      const checkpointsData = await Checkpoint.findAll({ where: { EventId: event_id } });
-      const answerData = await checkpointsData.map(e => {
-        return {
-          UserId: req.user.id,
-          CheckpointId: e.id
-        };
-      });
-      await AnswerQuiz.bulkCreate(answerData, { transaction: t });
-      await User_Event.create({
-        UserId: req.user.id,
-        EventId: event_id
-      }, { transaction: t });
-
-      const data = await Event.findByPk(event_id, { transaction: t });
-      const finalAddAmmount = data.amount + 100000;
-      await Event.update({ amount: finalAddAmmount }, {
+      const checkEvent = await User_Event.findAll({
         where: {
-          id: event_id
-        },
-      }, { transaction: t });
-
-      await t.commit();
-      res.status(201).json({
-        message: `event successfully added`
+          UserId: req.user.id,
+          EventId: event_id
+        }
       });
+      if (!checkEvent) {
+        const checkpointsData = await Checkpoint.findAll({ where: { EventId: event_id } });
+        const answerData = await checkpointsData.map(e => {
+          return {
+            UserId: req.user.id,
+            CheckpointId: e.id
+          };
+        });
+        await AnswerQuiz.bulkCreate(answerData, { transaction: t });
+        await User_Event.create({
+          UserId: req.user.id,
+          EventId: event_id
+        }, { transaction: t });
+
+        const data = await Event.findByPk(event_id, { transaction: t });
+        const finalAddAmmount = data.amount + 100000;
+        await Event.update({ amount: finalAddAmmount }, {
+          where: {
+            id: event_id
+          },
+        }, { transaction: t });
+
+        await t.commit();
+        res.status(201).json({
+          message: `event successfully added`
+        });
+      }
+      else {
+        res.status(403).json({
+          message: `event already added`
+        });
+      }
+
     } catch (error) {
       await t.rollback();
       console.log(error);
