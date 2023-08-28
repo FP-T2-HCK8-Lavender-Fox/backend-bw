@@ -1,9 +1,7 @@
 [
     {
         "name": "John Doe",
-        "username": "JohnDoe",
         "gender": "Male",
-        "birthDate": "1990-05-15",
         "email": "johndoe@example.com",
         "password": "securepassword123",
         "phoneNumber": "123-456-7890",
@@ -12,9 +10,7 @@
     },
     {
         "name": "Jane Smith",
-        "username": "JaneSmith",
         "gender": "Female",
-        "birthDate": "1988-10-20",
         "email": "janesmith@example.com",
         "password": "strongpass456",
         "phoneNumber": "987-654-3210",

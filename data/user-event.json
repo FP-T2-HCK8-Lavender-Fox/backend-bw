@@ -1,0 +1,12 @@
+[
+    {
+        "UserId": 1,
+        "EventId": 1,
+        "point": 10
+    },
+    {
+        "UserId": 2,
+        "EventId": 1,
+        "point": 10
+    }
+]
