@@ -175,13 +175,20 @@ module.exports = class eventController {
   };
 
   static deleteEvent = async (req, res, next) => {
+    const t = await sequelize.transaction();
     try {
       const { id } = req.params;
+      await Checkpoint.destroy({
+        where: { EventId: id }
+      }, { transaction: t });
+
       await Event.destroy({
         where: { id },
-      });
+      }, { transaction: t });
+      await t.commit();
       res.status(200).json({ message: "event successfully deleted" });
     } catch (error) {
+      await t.rollback();
       console.log(error);
       next(error);
     }
