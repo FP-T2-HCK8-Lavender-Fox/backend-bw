@@ -11,7 +11,7 @@ user_event
     usersAuth,
     userEventController.getUserEventsByUserId
   )
-  .get("/users-event/:id", usersAuth, userEventController.getEventByEventId)
+  .get("/users-event/:id", usersAuth, userEventController.getEventByEventId)//asdasd
   .post("/users-event/:event_id", usersAuth, userEventController.addEvent)
   .delete("/users-event/:id", adminAuth, userEventController.deleteEvent);
 
