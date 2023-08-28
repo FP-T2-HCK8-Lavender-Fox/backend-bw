@@ -44,6 +44,7 @@ module.exports = class eventController {
           },
         ],
       });
+      if (!dataEvent) throw ({ name: "Data not found!" })
       const dataUsers = await User_Event.findAll({
         include: [
           {

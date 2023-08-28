@@ -67,6 +67,8 @@ module.exports = class userEventController {
         ],
       });
 
+      if (!dataEvent) throw ({ name: "Data not found!" })
+
       const dataCheckpoint = await Checkpoint.findAll({
         where: { EventId: id },
       });

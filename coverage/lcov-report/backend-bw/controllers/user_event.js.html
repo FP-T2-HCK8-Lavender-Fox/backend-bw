@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">21.62% </span>
+                <span class="strong">28.94% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>16/74</span>
+                <span class='fraction'>22/76</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">25% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>1/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">16.66% </span>
+                <span class="strong">25% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/12</span>
+                <span class='fraction'>3/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">21.91% </span>
+                <span class="strong">29.72% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>16/73</span>
+                <span class='fraction'>22/74</span>
             </div>
         
             
@@ -329,7 +329,9 @@
 <a name='L264'></a><a href='#L264'>264</a>
 <a name='L265'></a><a href='#L265'>265</a>
 <a name='L266'></a><a href='#L266'>266</a>
-<a name='L267'></a><a href='#L267'>267</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L267'></a><a href='#L267'>267</a>
+<a name='L268'></a><a href='#L268'>268</a>
+<a name='L269'></a><a href='#L269'>269</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -372,9 +374,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -398,10 +400,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -637,10 +641,10 @@ module.exports = class userEventController {
     }
   };
 &nbsp;
-  static getUserEventById = <span class="fstat-no" title="function not covered" >as</span>ync (req, res, next) =&gt; {
-<span class="cstat-no" title="statement not covered" >    try {</span>
-      const { id } = <span class="cstat-no" title="statement not covered" >req.params;</span>
-      const dataEvent = <span class="cstat-no" title="statement not covered" >await User_Event.findByPk(id, {</span>
+  static getUserEventById = async (req, res, next) =&gt; {
+    try {
+      const { id } = req.params;
+      const dataEvent = await User_Event.findByPk(id, {
         include: [
           {
             model: User,
@@ -664,10 +668,12 @@ module.exports = class userEventController {
         ],
       });
 &nbsp;
-      const dataCheckpoint = <span class="cstat-no" title="statement not covered" >await Checkpoint.findAll({</span>
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (!dataEvent) <span class="cstat-no" title="statement not covered" >throw ({ name: "Data not found!" })</span>
+&nbsp;
+      const dataCheckpoint = await Checkpoint.findAll({
         where: { EventId: id },
       });
-<span class="cstat-no" title="statement not covered" >      res.status(200).json({ dataEvent, dataCheckpoint });</span>
+      res.status(200).json({ dataEvent, dataCheckpoint });
     } catch (error) {
 <span class="cstat-no" title="statement not covered" >      console.log(error);</span>
 <span class="cstat-no" title="statement not covered" >      next(error);</span>
@@ -868,7 +874,7 @@ module.exports = class userEventController {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-08-28T16:57:46.758Z
+                at 2023-08-28T18:41:25.121Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
