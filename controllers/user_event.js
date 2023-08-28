@@ -77,7 +77,7 @@ module.exports = class userEventController {
     try {
       const { event_id } = req.params;
 
-      const checkEvent = await User_Event.findAll({
+      const checkEvent = await User_Event.findOne({
         where: {
           UserId: req.user.id,
           EventId: event_id
