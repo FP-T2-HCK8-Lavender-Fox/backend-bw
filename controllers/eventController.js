@@ -1,9 +1,10 @@
 const imagekit = require("../config/imagekit");
 const {
+  User,
   Event,
   Admin,
   Category,
-  Image,
+  User_Event,
   sequelize,
   Checkpoint,
 } = require("../models");
@@ -43,7 +44,15 @@ module.exports = class eventController {
           },
         ],
       });
-      res.status(200).json(dataEvent);
+      const dataUsers = await User_Event.findAll({
+        include: [
+          {
+            model: User,
+            attributes: { exclude: ["password"] },
+          },
+        ],
+      }, { where: { EventId: id } });
+      res.status(200).json({ dataEvent, dataUsers });
     } catch (error) {
       console.log(error);
       next(error);

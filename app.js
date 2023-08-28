@@ -23,5 +23,5 @@ app.use(
 app.use(router);
 app.use(errorHandler);
 
-// app.listen(port, () => console.log(`Listening to Port: ${port}`));
+app.listen(port, () => console.log(`Listening to Port: ${port}`));
 module.exports = app;
