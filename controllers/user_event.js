@@ -82,7 +82,7 @@ module.exports = class userEventController {
           UserId: req.user.id,
           EventId: event_id
         }
-      });
+      }, { transaction: t });
       if (!checkEvent) {
         const checkpointsData = await Checkpoint.findAll({ where: { EventId: event_id } });
         const answerData = await checkpointsData.map(e => {
@@ -111,6 +111,7 @@ module.exports = class userEventController {
         });
       }
       else {
+        await t.commit();
         res.status(403).json({
           message: `event already added`
         });
