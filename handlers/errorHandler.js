@@ -44,9 +44,16 @@ module.exports = (err, req, res, next) => {
     case "CategoryId is required!":
     case "pictures is required!":
     case "Checkpoints is required!":
+    case "CheckpointId is required!":
+    case "UserId is required!":
     case "Checkpoints must 3!":
     case "Only Accept 100k":
       res.status(400).json({ message: err.name });
+      break;
+
+    // 404
+    case "Data not found!":
+      res.status(404).json({ message: err.name });
       break;
 
     //!401
