@@ -1,0 +1,32 @@
+[
+    {
+        "lat": 123.456789,
+        "long": -45.678901,
+        "question": "What is the capital of France?",
+        "trueAnswer": "Paris",
+        "wrongAnswerOne": "London",
+        "wrongAnswerTwo": "Berlin",
+        "name": "Checkpoint 1",
+        "EventId": 1
+    },
+    {
+        "lat": 122.456789,
+        "long": -45.678901,
+        "question": "What is the capital of England?",
+        "trueAnswer": "London",
+        "wrongAnswerOne": "Paris",
+        "wrongAnswerTwo": "Berlin",
+        "name": "Checkpoint 2",
+        "EventId": 1
+    },
+    {
+        "lat": 120.456789,
+        "long": -45.678901,
+        "question": "What is the capital of Indonesia?",
+        "trueAnswer": "Jakarta",
+        "wrongAnswerOne": "London",
+        "wrongAnswerTwo": "Berlin",
+        "name": "Checkpoint 3",
+        "EventId": 1
+    }
+]
