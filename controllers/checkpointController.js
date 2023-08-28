@@ -1,4 +1,5 @@
 const { Checkpoint, sequelize, AnswerQuiz } = require("../models");
+const QRCode = require('qrcode');
 
 module.exports = class checkpointController {
   static getAllCheckpoint = async (req, res, next) => {
@@ -43,6 +44,4 @@ module.exports = class checkpointController {
       next(error);
     }
   };
-
-
 };

@@ -60,7 +60,9 @@ module.exports = class userEventController {
           }
         ]
       });
-      res.status(200).json(dataEvent);
+
+      const dataCheckpoint = await Checkpoint.findAll({ where: { EventId: id } });
+      res.status(200).json({ dataEvent, dataCheckpoint });
     } catch (error) {
       console.log(error);
       next(error);
