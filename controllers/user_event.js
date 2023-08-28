@@ -86,6 +86,15 @@ module.exports = class userEventController {
         UserId: req.user.id,
         EventId: event_id
       }, { transaction: t });
+
+      const data = await Event.findByPk(event_id, { transaction: t });
+      const finalAddAmmount = data.amount + 100000;
+      await Event.update({ amount: finalAddAmmount }, {
+        where: {
+          id: event_id
+        },
+      }, { transaction: t });
+
       await t.commit();
       res.status(201).json({
         message: `event successfully added`
