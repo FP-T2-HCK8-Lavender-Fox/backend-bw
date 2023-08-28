@@ -1,4 +1,5 @@
 const {
+  Leaderboard,
   User_Event,
   User, Event,
   Category,
@@ -196,4 +197,46 @@ module.exports = class userEventController {
       //check
     }
   };
+
+  static getEventByEventId = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const dataEvents = await User_Event.findOne(
+        {
+          include: [
+            {
+              model: User,
+              attributes: { exclude: ["password"] },
+            },
+            {
+              model: Event,
+              include: [
+                {
+                  model: Category,
+                },
+                {
+                  model: Admin,
+                  attributes: { exclude: ["password"] },
+                },
+              ],
+            },
+          ],
+        },
+        { where: { EventId: id } }
+      );
+      const checkpointData = await Checkpoint.findAll({
+        where: { EventId: dataEvents.EventId },
+      });
+      const answerQuizData = await AnswerQuiz.findAll({
+        where: { UserId: req.user.id },
+      });
+      const leaderboard = await Leaderboard.findOne({ where: { EventId: id } });
+      res.status(200).json({ dataEvents, checkpointData, answerQuizData, leaderboard });
+    } catch (error) {
+      console.log(error);
+      next(error);
+      //check
+    }
+  };
 };
+
