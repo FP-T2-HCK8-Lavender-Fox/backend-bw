@@ -72,6 +72,25 @@ module.exports = class userEventController {
     }
   };
 
+  static getUserEventsByUserId = async (req, res, next) => {
+    try {
+      const { id } = req.user;
+      const eventsOfUser = await User_Event.findAll({
+        where: {
+          UserId: id,
+        },
+        include: [
+          {
+            model: Event,
+          },
+        ],
+      });
+      res.status(200).json(eventsOfUser);
+    } catch (error) {
+      next(error);
+    }
+  };
+
 
   static addEvent = async (req, res, next) => {
     //!create 3 answer
