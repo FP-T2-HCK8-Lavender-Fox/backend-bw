@@ -4,7 +4,6 @@ const usersAuth = require('../middlewares/usersAuth');
 const payment = express.Router();
 
 payment
-  .post('/payment-token', usersAuth, paymentController.generateToken)
-  .patch('/amount/:id', usersAuth, paymentController.addAmmountEvent);
+  .post('/payment-token', usersAuth, paymentController.generateToken);
 
 module.exports = payment;

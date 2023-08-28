@@ -32,25 +32,6 @@ class paymentController {
       next(error);
     }
   }
-
-  static async addAmmountEvent(req, res, next) {
-    try {
-      const { id } = req.params;
-      const data = await Event.findByPk(id);
-      const finalAddAmmount = data.amount + 100000;
-      await Event.update({ amount: finalAddAmmount }, {
-        where: {
-          id
-        }
-      });
-
-      res.status(201).json({ message: "success add amount, total amount = " + data.amount });
-
-    } catch (error) {
-      console.log(error);
-      next(error);
-    }
-  }
 }
 
 module.exports = paymentController;
