@@ -20,6 +20,7 @@ module.exports = class checkpointController {
           EventId: eventId
         }
       });
+      if (dataCategory.length === 0) throw ({ name: "Data not found!" })
       res.status(200).json(dataCategory);
     } catch (error) {
       console.log(error);
@@ -31,12 +32,12 @@ module.exports = class checkpointController {
     try {
       const { CheckpointId } = req.params;
       const { answer } = req.body;
+      if (!CheckpointId) throw ({ name: "CheckpointId is required!" })
       await AnswerQuiz.create({
         trueOrFalse: answer,
         CheckpointId,
         UserId: req.user.id
       });
-
 
       res.status(201).json({ message: "success post answer data" });
     } catch (error) {

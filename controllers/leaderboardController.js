@@ -36,6 +36,7 @@ module.exports = class leaderboardController {
             },
           ]
         });
+      if (!dataLeaderboard) throw ({ name: "Data not found!" })
       res.status(200).json(dataLeaderboard);
     } catch (error) {
       console.log(error);
@@ -49,6 +50,8 @@ module.exports = class leaderboardController {
       const { UserId, position } = req.body;
       //!admin post leaderboard by event id
       //!data position and user on body
+
+      if (!UserId) throw ({ name: "UserId is required!" })
       const dataLeaderboard = await Leaderboard.create({
         EventId: eventId,
         UserId,
@@ -64,6 +67,10 @@ module.exports = class leaderboardController {
   static deleteLeaderboard = async (req, res, next) => {
     try {
       const { id } = req.params;
+      const leaderboard = await Leaderboard.findByPk(id);
+      console.log(leaderboard);
+      if (!leaderboard) throw ({ name: "Data not found!" })
+
       await Leaderboard.destroy({
         where: { id }
       });
@@ -73,6 +80,4 @@ module.exports = class leaderboardController {
       next(error);
     }
   };
-
-
 };
