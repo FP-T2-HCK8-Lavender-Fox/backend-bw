@@ -53,6 +53,9 @@ module.exports = class userEventController {
                 model: Category,
               },
               {
+                model: Checkpoint, //! Tambahan !
+              },
+              {
                 model: Admin,
                 attributes: { exclude: ['password'] }
               }
