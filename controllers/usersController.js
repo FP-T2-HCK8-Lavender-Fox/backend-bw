@@ -15,7 +15,7 @@ module.exports = class usersController {
   static getUserById = async (req, res, next) => {
     try {
       const { id } = req.user;
-      const dataUser = await User.findByPk(id);
+      const dataUser = await User.findByPk(id, { exclude: ["password"] });
       res.status(200).json(dataUser);
     } catch (error) {
       console.log(error);
@@ -38,7 +38,7 @@ module.exports = class usersController {
       });
       res.status(201).json({
         message: `${dataUsers.email} successfully registered`,
-        dataUsers
+        dataUsers,
       });
     } catch (error) {
       console.log(error);
