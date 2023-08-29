@@ -27,7 +27,7 @@ module.exports = class friendshipController {
         return res.status(400).json({ message: 'You are already friends.' });
       }
 
-      // kalo gak da create hubungan pertemanan
+      // kalo gak da create hubungan pertemanan---
       await Friendship.create({
         UserId,
         FriendId,
