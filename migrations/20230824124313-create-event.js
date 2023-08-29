@@ -38,11 +38,11 @@ module.exports = {
         allowNull: false,
       },
       lat: {
-        type: Sequelize.STRING,
+        type: Sequelize.DECIMAL(9, 6),
         allowNull: false,
       },
       long: {
-        type: Sequelize.STRING,
+        type: Sequelize.DECIMAL(9, 6),
         allowNull: false,
       },
       pics: {
@@ -54,7 +54,7 @@ module.exports = {
         references: {
           model: 'Categories',
           key: 'id',
-          onDelete: 'CASCASE',
+          onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         },
       },
@@ -63,7 +63,7 @@ module.exports = {
         references: {
           model: 'Admins',
           key: 'id',
-          onDelete: 'CASCASE',
+          onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         },
       },

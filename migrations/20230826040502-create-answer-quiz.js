@@ -16,14 +16,18 @@ module.exports = {
         type: Sequelize.INTEGER,
         references: {
           model: 'Users',
-          key: 'id'
+          key: 'id',
+          onDelete: "CASCADE",
+          onUpdate: 'CASCADE'
         }
       },
       CheckpointId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Checkpoints',
-          key: 'id'
+          key: 'id',
+          onDelete: "CASCADE",
+          onUpdate: 'CASCADE'
         }
       },
       createdAt: {

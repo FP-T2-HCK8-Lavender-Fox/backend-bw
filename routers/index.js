@@ -7,6 +7,8 @@ const eventRouter = require('./event');
 const leaderboardRouter = require('./leaderboard');
 const userEventRouter = require('./user_event');
 const checkpointRouter = require('./checkpoint');
+const paymentRouter = require('./payment');
+const friendshipRouter = require('./friendship');
 
 router
   .use(userRouter)
@@ -15,7 +17,9 @@ router
   .use(eventRouter)
   .use(leaderboardRouter)
   .use(userEventRouter)
-  .use(checkpointRouter);
+  .use(checkpointRouter)
+  .use(paymentRouter)
+  .use(friendshipRouter);
 
 module.exports = router
 

@@ -15,6 +15,7 @@ module.exports = class categoryController {
     try {
       const { id } = req.params;
       const dataCategory = await Category.findByPk(id);
+      if (!dataCategory) throw ({ name: "Data not found!" })
       res.status(200).json(dataCategory);
     } catch (error) {
       console.log(error);

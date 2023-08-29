@@ -15,7 +15,7 @@ module.exports = {
         references: {
           model: 'Events',
           key: 'id',
-          onDelete: 'CASCASE',
+          onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         }
       },
@@ -25,7 +25,7 @@ module.exports = {
         references: {
           model: 'Users',
           key: 'id',
-          onDelete: 'CASCASE',
+          onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         }
       },

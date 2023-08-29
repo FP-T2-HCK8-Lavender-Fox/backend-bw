@@ -16,6 +16,7 @@ module.exports = class adminController {
     try {
       const { id } = req.params;
       const dataAdmin = await Admin.findByPk(id);
+      if (!dataAdmin) throw ({ name: "Data not found!" })
       res.status(200).json(dataAdmin);
     } catch (error) {
       console.log(error);
@@ -61,7 +62,7 @@ module.exports = class adminController {
         username: checkAdmin.username,
         email: checkAdmin.email
       });
-      res.status(200).json({ access_token });
+      res.status(200).json({ access_token, username: checkAdmin.username });
 
     } catch (error) {
       console.log(error);

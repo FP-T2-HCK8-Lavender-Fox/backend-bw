@@ -1,0 +1,12 @@
+[
+    {
+        "EventId": 1,
+        "UserId": 1,
+        "position": 2
+    },
+    {
+        "EventId": 1,
+        "UserId": 2,
+        "position": 1
+    }
+]
