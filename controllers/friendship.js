@@ -126,16 +126,18 @@ module.exports = class friendshipController {
       const { id: UserId } = req.user;
 
       // Ambil data pertemanan yang statusnya 'pending' ato (menunggu persetujuan)
-      const pendingFriendships = await Friendship.findAll({
+      const existingFriendship = await Friendship.findAll({
         where: {
           [Op.or]: [
-            { UserId: UserId, status: "pending" },
-            { FriendId: UserId, status: "pending" },
+            {
+              [Op.or]: [{ UserId: UserId }, { FriendId: UserId }],
+            },
+            { [Op.or]: [{ status: "accepted" }, { status: "pending" }] },
           ],
         },
       });
 
-      const friendIds = pendingFriendships.map((friendship) => {
+      const friendIds = existingFriendship.map((friendship) => {
         if (friendship.UserId === UserId) {
           return friendship.FriendId;
         } else {

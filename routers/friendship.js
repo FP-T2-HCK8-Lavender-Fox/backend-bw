@@ -4,7 +4,7 @@ const friendshipController = require("../controllers/friendship");
 const friendship = express.Router();
 
 friendship
-  .get("/friends/", usersAuth, friendshipController.getFriendLists)
+  .get("/friends", usersAuth, friendshipController.getFriendLists)
   .get(
     "/friends/request",
     usersAuth,
