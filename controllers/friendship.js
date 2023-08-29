@@ -8,23 +8,22 @@ module.exports = class friendshipController {
       const { id: UserId } = req.user;
 
       // cek apakah pertemanan udah ada?
+
       const existingFriendship = await Friendship.findOne({
         where: {
-          UserId,
-          FriendId,
-          status: "accepted" || "pending",
+          [Op.and]: [
+            {
+              [Op.or]: [{ UserId: UserId }, { UserId: FriendId }],
+            },
+            {
+              [Op.or]: [{ FriendId: UserId }, { FriendId: FriendId }],
+            },
+            { [Op.or]: [{ status: "accepted" }, { status: "pending" }] },
+          ],
         },
       });
 
-      const existingFriendship1 = await Friendship.findOne({
-        where: {
-          UserId: FriendId,
-          FriendId: UserId,
-          status: "accepted" || "pending",
-        },
-      });
-
-      if (existingFriendship || existingFriendship1) {
+      if (existingFriendship) {
         return res.status(400).json({ message: "You are already friends." });
       }
 
