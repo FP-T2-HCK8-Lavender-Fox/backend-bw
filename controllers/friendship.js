@@ -12,7 +12,7 @@ module.exports = class friendshipController {
         where: {
           UserId,
           FriendId,
-          status: "accepted",
+          status: "accepted" || "pending",
         },
       });
 
@@ -20,7 +20,7 @@ module.exports = class friendshipController {
         where: {
           UserId: FriendId,
           FriendId: UserId,
-          status: "accepted",
+          status: "accepted" || "pending",
         },
       });
 
