@@ -1,4 +1,4 @@
-const { Friendship, User } = require('../models');
+const { Friendship, User } = require("../models");
 const { Op } = require("sequelize");
 
 module.exports = class friendshipController {
@@ -12,32 +12,32 @@ module.exports = class friendshipController {
         where: {
           UserId,
           FriendId,
-          status: 'accepted'
-        }
+          status: "accepted",
+        },
       });
 
       const existingFriendship1 = await Friendship.findOne({
         where: {
           UserId: FriendId,
           FriendId: UserId,
-          status: 'accepted'
-        }
+          status: "accepted",
+        },
       });
 
       if (existingFriendship || existingFriendship1) {
-        return res.status(400).json({ message: 'You are already friends.' });
+        return res.status(400).json({ message: "You are already friends." });
       }
 
       // kalo gak da create hubungan pertemanan
       await Friendship.create({
         UserId,
         FriendId,
-        status: 'pending'
+        status: "pending",
       });
 
-      res.status(201).json({ message: 'Friend request sent.' });
+      res.status(201).json({ message: "Friend request sent." });
     } catch (error) {
-      console.error('Error adding friend:', error);
+      console.error("Error adding friend:", error);
       next(error);
     }
   };
@@ -48,17 +48,16 @@ module.exports = class friendshipController {
 
       // buat status pertemanan menjadi accepted ..
       await Friendship.update(
-        { status: 'accepted' },
+        { status: "accepted" },
         { where: { UserId: FriendId, FriendId: UserId } } // Tukar UserId dan FriendId
       );
 
-      res.status(200).json({ message: 'Friend request accepted.' });
+      res.status(200).json({ message: "Friend request accepted." });
     } catch (error) {
-      console.error('Error accepting friend request:', error);
+      console.error("Error accepting friend request:", error);
       next(error);
     }
   };
-
 
   static getFriendLists = async (req, res, next) => {
     try {
@@ -69,13 +68,13 @@ module.exports = class friendshipController {
       const friendships = await Friendship.findAll({
         where: {
           [Op.or]: [
-            { UserId: UserId, status: 'accepted' },
-            { FriendId: UserId, status: 'accepted' }
-          ]
-        }
+            { UserId: UserId, status: "accepted" },
+            { FriendId: UserId, status: "accepted" },
+          ],
+        },
       });
 
-      const friendIds = friendships.map(friendship => {
+      const friendIds = friendships.map((friendship) => {
         if (friendship.UserId === UserId) {
           return friendship.FriendId;
         } else {
@@ -83,16 +82,19 @@ module.exports = class friendshipController {
         }
       });
 
-      // Ambil data teman-temannya berdasarkan ID-nya 
+      // Ambil data teman-temannya berdasarkan ID-nya
       const friends = await User.findAll({
         where: {
-          id: friendIds
-        }
+          id: friendIds,
+        },
+        attributes: {
+          exclude: ["password"],
+        },
       });
 
       res.status(200).json({ friends });
     } catch (error) {
-      console.error('Error getting friend list:', error);
+      console.error("Error getting friend list:", error);
       next(error);
     }
   };
@@ -104,21 +106,33 @@ module.exports = class friendshipController {
       // Ambil data pertemanan yang statusnya 'pending' ato (menunggu persetujuan)
       const pendingFriendships = await Friendship.findAll({
         where: {
-          FriendId: UserId,
-          status: 'pending'
+          [Op.or]: [
+            { UserId: UserId, status: "pending" },
+            { FriendId: UserId, status: "pending" },
+          ],
         },
-        include: [
-          {
-            model: User,
-            as: 'User',
-            attributes: ['id', 'name', 'email']
-          }
-        ]
       });
 
-      res.status(200).json({ pendingFriendships });
+      const friendIds = pendingFriendships.map((friendship) => {
+        if (friendship.UserId === UserId) {
+          return friendship.FriendId;
+        } else {
+          return friendship.UserId;
+        }
+      });
+
+      const friends = await User.findAll({
+        where: {
+          id: friendIds,
+        },
+        attributes: {
+          exclude: ["password"],
+        },
+      });
+
+      res.status(200).json({ pendingFriendships: friends });
     } catch (error) {
-      console.error('Error getting pending friend requests:', error);
+      console.error("Error getting pending friend requests:", error);
       next(error);
     }
   };
@@ -133,13 +147,13 @@ module.exports = class friendshipController {
         where: {
           UserId: FriendId,
           FriendId: UserId,
-          status: 'pending'
-        }
+          status: "pending",
+        },
       });
 
-      res.status(200).json({ message: 'Friend request declined and removed.' });
+      res.status(200).json({ message: "Friend request declined and removed." });
     } catch (error) {
-      console.error('Error declining friend request:', error);
+      console.error("Error declining friend request:", error);
       next(error);
     }
   };
