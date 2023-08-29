@@ -126,6 +126,7 @@ module.exports = class eventController {
       await t.commit();
       res.status(201).json({
         message: `event and checkpoints successfully created`,
+        dataEvent
       });
     } catch (error) {
       console.log(error);

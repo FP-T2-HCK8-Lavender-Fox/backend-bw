@@ -38,6 +38,7 @@ module.exports = class usersController {
       });
       res.status(201).json({
         message: `${dataUsers.email} successfully registered`,
+        dataUsers
       });
     } catch (error) {
       console.log(error);
