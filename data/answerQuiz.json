@@ -1,0 +1,107 @@
+[
+    {
+        "trueOrFalse": true,
+        "UserId": 1,
+        "CheckpointId": 1
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 2,
+        "CheckpointId": 1
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 2,
+        "CheckpointId": 2
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 1,
+        "CheckpointId": 2
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 2,
+        "CheckpointId": 3
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 1,
+        "CheckpointId": 3
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 1,
+        "CheckpointId": 4
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 2,
+        "CheckpointId": 4
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 1,
+        "CheckpointId": 5
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 2,
+        "CheckpointId": 5
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 2,
+        "CheckpointId": 6
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 1,
+        "CheckpointId": 6
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 3,
+        "CheckpointId": 7
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 1,
+        "CheckpointId": 7
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 2,
+        "CheckpointId": 7
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 3,
+        "CheckpointId": 8
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 2,
+        "CheckpointId": 8
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 1,
+        "CheckpointId": 8
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 3,
+        "CheckpointId": 9
+    },
+    {
+        "trueOrFalse": false,
+        "UserId": 2,
+        "CheckpointId": 9
+    },
+    {
+        "trueOrFalse": true,
+        "UserId": 1,
+        "CheckpointId": 9
+    }
+]

@@ -1,0 +1,44 @@
+[
+    {
+        "name": "Test Event",
+        "startDate": "2023-08-28 14:39:00.000 +0700",
+        "endDate": "2023-08-30 14:39:00.000 +0700",
+        "active": true,
+        "description": "This is a test event",
+        "amount": 100000,
+        "address": "123 Test Street",
+        "lat": "123.456",
+        "long": "-78.901",
+        "pics": "https://ik.imagekit.io/f6nnqueth/1693193499012-TRADING_SOFTWARE_DEVELOPMENT_BANNER1_krTaC0fH.jpg",
+        "CategoryId": 1,
+        "AdminId": 1
+    },
+    {
+        "name": "Test Event2",
+        "startDate": "2023-08-28 16:40:00.000 +0700",
+        "endDate": "2023-09-08 14:38:00.000 +0700",
+        "active": true,
+        "description": "This is a test event1",
+        "amount": 20000,
+        "address": "123 Test Street",
+        "lat": "123.456",
+        "long": "-78.901",
+        "pics": "https://ik.imagekit.io/f6nnqueth/1693193499012-TRADING_SOFTWARE_DEVELOPMENT_BANNER1_krTaC0fH.jpg",
+        "CategoryId": 1,
+        "AdminId": 1
+    },
+    {
+        "name": "Test Event3",
+        "startDate": "2023-08-30 21:32:00.000 +0700",
+        "endDate": "2023-08-31 22:33:00.000 +0700",
+        "active": true,
+        "description": "This is a test event1",
+        "amount": 20000,
+        "address": "123 Test Street",
+        "lat": "123.456",
+        "long": "-78.901",
+        "pics": "https://ik.imagekit.io/f6nnqueth/1693193499012-TRADING_SOFTWARE_DEVELOPMENT_BANNER1_krTaC0fH.jpg",
+        "CategoryId": 1,
+        "AdminId": 1
+    }
+]
