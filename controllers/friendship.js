@@ -1,4 +1,5 @@
 const { Friendship, User } = require('../models');
+const { Op } = require("sequelize");
 
 module.exports = class friendshipController {
   static addFriend = async (req, res, next) => {
@@ -61,19 +62,28 @@ module.exports = class friendshipController {
 
   static getFriendLists = async (req, res, next) => {
     try {
-      const { id: UserId } = req.user; // Ambil UserId dari req.user
+      const { id: UserId } = req.user;
 
       // Ambil data pertemanan yang sudah diterima (status: accepted)
+      //harus pake OP biar bisa 2 sisi get friend nya bukan cuma yang add atau yg acc doang
       const friendships = await Friendship.findAll({
         where: {
-          UserId: UserId,
-          status: 'accepted'
+          [Op.or]: [
+            { UserId: UserId, status: 'accepted' },
+            { FriendId: UserId, status: 'accepted' }
+          ]
         }
       });
 
-      const friendIds = friendships.map(friendship => friendship.FriendId);
+      const friendIds = friendships.map(friendship => {
+        if (friendship.UserId === UserId) {
+          return friendship.FriendId;
+        } else {
+          return friendship.UserId;
+        }
+      });
 
-      // Ambil data teman2nya berdasarkan ID-nya 
+      // Ambil data teman-temannya berdasarkan ID-nya 
       const friends = await User.findAll({
         where: {
           id: friendIds
