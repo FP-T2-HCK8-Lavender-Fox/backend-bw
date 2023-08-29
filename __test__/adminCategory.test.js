@@ -1107,13 +1107,12 @@ describe("PUT /users/:id", () => {
 
 describe("POST /users/event/:id", () => {
     try {
-        const id = 1;
         // success add event
         test("201 - success add event to list event user", async () => {
-            const response = await request(app).post(`/users/event/${id}`)
+            const response = await request(app).post(`/users/event/2`)
                 .set("access_token", access_token_user)
                 .send({
-                    EventId: id
+                    EventId: 2
                 })
             expect(response.status).toBe(201);
             expect(response.body).toHaveProperty("message", "event successfully added")
@@ -1125,11 +1124,10 @@ describe("POST /users/event/:id", () => {
 
     // failed add event due to unautheticated
     test("401 Failed to add event due to authentication problem", async () => {
-        const id = 1;
-        const response = await request(app).post(`/users/event/${id}`)
+        const response = await request(app).post(`/users/event/2`)
             .set("access_token", null)
             .send({
-                EventId: id
+                EventId: 2
             })
         expect(response.status).toBe(401);
         expect(response.body).toHaveProperty("message", "require a valid token!");
@@ -1187,118 +1185,108 @@ describe("GET /users-event", () => {
     });
 });
 
+// GET event by event id
 describe("GET /users-event/:id", () => {
-    test("200 - success to get users-event by id", async () => {
+    test("200 - success to get event by eventId", async () => {
         try {
-            const response = await request(app).get("/users-event/1");
+            const EventId = 1;
+            const response = await request(app).get(`/users-event/${EventId}`)
+                .set("access_token", access_token_user)
             expect(response.status).toBe(200);
             expect(response.body).toBeInstanceOf(Object);
             expect(response.body.length).toBeGreaterThan(0);
+            expect(response.body.dataEvents).toHaveProperty("UserId", expect.any(Number));
+            expect(response.body.dataEvents).toHaveProperty("EventId", expect.any(Number));
+            expect(response.body.dataEvents).toHaveProperty("point", expect.any(Number));
+            expect(response.body.dataEvents.User).toHaveProperty("name", expect.any(String));
+            expect(response.body.dataEvents.User).toHaveProperty("gender", expect.any(String));
+            expect(response.body.dataEvents.Event.Category).toHaveProperty("name", expect.any(String));
+            expect(response.body.dataEvents.Event.Admin).toHaveProperty("username", expect.any(String));
+            expect(response.body.dataEvents.Event.Admin).toHaveProperty("email", expect.any(String));
 
-            // Check properties of the first user-event object in the response array
-            const userEvent = response.body;
-            expect(userEvent).toHaveProperty("id", expect.any(Number));
+            expect(response.body.checkpointData).toHaveProperty("name", expect.any(String));
+            expect(response.body.checkpointData).toHaveProperty("question", expect.any(String));
+            expect(response.body.checkpointData).toHaveProperty("trueAnswer", expect.any(String));
 
-            const event = userEvent.Event;
-            expect(event).toHaveProperty("id", expect.any(Number));
-            expect(event).toHaveProperty("AdminId", expect.any(Number));
-            expect(event).toHaveProperty("CategoryId", expect.any(Number));
-            expect(event).toHaveProperty("active", true);
-            expect(event).toHaveProperty("address", expect.any(String));
-            expect(event).toHaveProperty("amount", expect.any(Number));
-            expect(event).toHaveProperty("createdAt", expect.any(String));
-            expect(event).toHaveProperty("description", expect.any(String));
-            expect(event).toHaveProperty("endDate", expect.any(String));
-            expect(event).toHaveProperty("lat", expect.any(String));
-            expect(event).toHaveProperty("long", expect.any(String));
-            expect(event).toHaveProperty("name", expect.any(String));
-            expect(event).toHaveProperty("pics", expect.any(String));
-            expect(event).toHaveProperty("startDate", expect.any(String));
-            expect(event).toHaveProperty("updatedAt", expect.any(String));
+            expect(response.body.answeQuizData).toHaveProperty("trueOrFalse", expect.any(Boolean));
 
-            const user = userEvent.User;
-            expect(user).toHaveProperty("id", expect.any(Number));
-            expect(user).toHaveProperty("address", expect.any(String));
-            expect(user).toHaveProperty("birthDate", null);
-            expect(user).toHaveProperty("createdAt", expect.any(String));
-            expect(user).toHaveProperty("email", expect.any(String));
-            expect(user).toHaveProperty("gender", expect.any(String));
-            expect(user).toHaveProperty("ktpId", expect.any(String));
-            expect(user).toHaveProperty("name", expect.any(String));
-            expect(user).toHaveProperty("phoneNumber", expect.any(String));
-            expect(user).toHaveProperty("updatedAt", expect.any(String));
-
-            expect(userEvent).toHaveProperty("point", expect.any(Number));
-            expect(userEvent).toHaveProperty("createdAt", expect.any(String));
-            expect(userEvent).toHaveProperty("updatedAt", expect.any(String));
+            expect(response.body.leaderboard).toHaveProperty("position", expect.any(Number));
         } catch (error) {
-            console.error(error);
+            console.log(error);
         }
     });
+});
 
-    test("404 - failed to get user-event by id because data not found", async () => {
-        const response = await request(app).get("/users-event/event/1")
-        expect(response.status).toBe(404)
-        expect(response.body).toHaveProperty("message", "Data not found!")
+// GET user-event by id
+describe("GET /users-event/event/:id", () => {
+    try {
+        test("200 - success to get user-event by id", async () => {
+            const id = 1;
+            const response = await request(app).get(`/users-event/event/${id}`)
+
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Object);
+            expect(response.body.length).toBeGreaterThan(0);
+            expect(response.body.dataEvent).toHaveProperty("UserId", expect.any(Number));
+            expect(response.body.dataEvent).toHaveProperty("EventId", expect.any(Number));
+            expect(response.body.dataEvent).toHaveProperty("point", expect.any(Number));
+
+            expect(response.body.dataEvent.User).toHaveProperty("name", expect.any(String));
+            expect(response.body.dataEvent.User).toHaveProperty("gender", expect.any(String));
+
+            expect(response.body.dataEvent.Event.Category).toHaveProperty("name", expect.any(String));
+
+            expect(response.body.dataEvent.Event.Checkpoint).toHaveProperty("name", expect.any(String));
+            expect(response.body.dataEvent.Event.Checkpoint).toHaveProperty("question", expect.any(String));
+            expect(response.body.dataEvent.Event.Checkpoint).toHaveProperty("trueAnswer", expect.any(String));
+
+            expect(response.body.dataEvent.Event.Admin).toHaveProperty("username", expect.any(String));
+            expect(response.body.dataEvent.Event.Admin).toHaveProperty("email", expect.any(String));
+        });
+    } catch (error) {
+        console.log(error);
+    }
+
+    test("404 - failed because dataEvent not found", async () => {
+        const id = 100000;
+        const response = await request(app).get(`/users-event/event/${id}`)
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty("message", "Data not found!");
     })
+
 });
 
 // GET event by userId
-describe("GET /users-event/users/:id", () => {
+describe("GET /users-event/users/detail", () => {
     test("200 - success to get users-event by userId", async () => {
         try {
-            // Mock data
-            const userEventMock = {
-                id: 1,
-                Event: {
-                    id: 1,
-                    AdminId: 1,
-                    CategoryId: 1,
-                    active: true,
-                    address: "123 Test Street",
-                    amount: 100000,
-                    // ... other event properties
-                },
-                User: {
-                    id: 1,
-                    address: "123 Main St, City",
-                    birthDate: null,
-                    // ... other user properties
-                },
-                point: 10,
-                createdAt: "2023-08-28T07:41:55.562Z",
-                updatedAt: "2023-08-28T07:41:55.562Z",
-            };
-
-            User_Event.findOne.mockResolvedValue(userEventMock); // Mocking the database call
-
-            const response = await request(app).get("/users-event/users/1");
-
+            const response = await request(app).get(`/users-event/detail`)
+                .set("access_token", access_token_user)
             expect(response.status).toBe(200);
-            expect(response.body).toEqual(expect.any(Object)); // Response body should be an object
-
-            // Check properties of the user-event object in the response
-            const userEvent = response.body;
-            expect(userEvent).toHaveProperty("id", userEventMock.id);
-
-            const event = userEvent.Event;
-            expect(event).toHaveProperty("id", userEventMock.Event.id);
-            expect(event).toHaveProperty("AdminId", userEventMock.Event.AdminId);
-            expect(event).toHaveProperty("CategoryId", userEventMock.Event.CategoryId);
-            // ... similar checks for other event properties
-
-            const user = userEvent.User;
-            expect(user).toHaveProperty("id", userEventMock.User.id);
-            expect(user).toHaveProperty("address", userEventMock.User.address);
-            // ... similar checks for other user properties
-
-            expect(userEvent).toHaveProperty("point", userEventMock.point);
-            expect(userEvent).toHaveProperty("createdAt", userEventMock.createdAt);
-            expect(userEvent).toHaveProperty("updatedAt", userEventMock.updatedAt);
+            expect(response.body).toBeInstanceOf(Object);
+            expect(response.body.length).toBeGreaterThan(0);
+            expect(response.body).toHaveProperty("UserId", expect.any(Number));
+            expect(response.body).toHaveProperty("EventId", expect.any(Number));
+            expect(response.body).toHaveProperty("point", expect.any(Number));
+            expect(response.body).toHaveProperty("point", expect.any(Number));
+            expect(response.body.Event).toHaveProperty("id", expect.any(Number));
+            expect(response.body.Event).toHaveProperty("name", expect.any(String));
+            expect(response.body.Event).toHaveProperty("startDate", expect.any(String));
+            expect(response.body.Event).toHaveProperty("endDate", expect.any(String));
+            expect(response.body.Event).toHaveProperty("active", expect.any(Boolean));
+            expect(response.body.Event).toHaveProperty("description", expect.any(String));
         } catch (error) {
-            console.error(error);
+            console.log(error);
         }
     });
+
+    test("401 - failed due to authentication problem", async () => {
+        const response = await request(app).get(`/users-event/detail`)
+            .set("access_token", null)
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty("message", "require a valid token!");
+    })
+
 });
 
 // PAYMENT
@@ -1423,6 +1411,33 @@ describe("POST /leaderboards/:eventId", () => {
             })
         expect(response.status).toBe(400)
         expect(response.body).toHaveProperty("message", `UserId is required!`)
+    })
+})
+
+describe("DELETE /users-event/:id", () => {
+    // success
+    try {
+        test("200 - success delete user event with certain id", async () => {
+            const response = await request(app).delete("/users-event/1").set("access_token", access_token_admin)
+            expect(response.status).toBe(200);
+            expect(response.body).toHaveProperty("message", "event successfully deleted");
+        })
+    } catch (error) {
+        console.log(error);
+    }
+
+    test("404 - failed to delete leaderboard due to data not found", async () => {
+        const response = await request(app).delete("/users-event/10000").set("access_token", access_token_admin)
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty("message", "Data not found!");
+    })
+
+    test("401 - failed to delete leaderboard due to authentication problem", async () => {
+        const response = await request(app).delete("/users-event/1").set("access_token", null)
+
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty("message", "require a valid token!");
     })
 })
 
