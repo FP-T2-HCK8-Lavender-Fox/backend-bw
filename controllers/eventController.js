@@ -44,17 +44,16 @@ module.exports = class eventController {
           },
         ],
       });
-      const dataUsers = await User_Event.findAll(
-        {
-          include: [
-            {
-              model: User,
-              attributes: { exclude: ["password"] },
-            },
-          ],
-          where: { EventId: id },
-        },
-      );
+      const dataUsers = await User_Event.findAll({
+        include: [
+          {
+            model: User,
+            attributes: { exclude: ["password"] },
+          },
+        ],
+        where: { EventId: id },
+        order: [['point', 'DESC']]
+      });
       res.status(200).json({ dataEvent, dataUsers });
     } catch (error) {
       console.log(error);
