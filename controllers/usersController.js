@@ -15,7 +15,9 @@ module.exports = class usersController {
   static getUserById = async (req, res, next) => {
     try {
       const { id } = req.user;
-      const dataUser = await User.findByPk(id, { exclude: ["password"] });
+      const dataUser = await User.findByPk(id, {
+        attributes: { exclude: ["password"] },
+      });
       res.status(200).json(dataUser);
     } catch (error) {
       console.log(error);
