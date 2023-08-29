@@ -87,9 +87,6 @@ module.exports = class friendshipController {
         where: {
           id: friendIds,
         },
-        attributes: {
-          exclude: ["password"],
-        },
       });
 
       res.status(200).json({ friends });
@@ -100,6 +97,32 @@ module.exports = class friendshipController {
   };
 
   static getFriendsToAcceptLists = async (req, res, next) => {
+    try {
+      const { id: UserId } = req.user;
+
+      // Ambil data pertemanan yang statusnya 'pending' ato (menunggu persetujuan)
+      const pendingFriendships = await Friendship.findAll({
+        where: {
+          FriendId: UserId,
+          status: "pending",
+        },
+        include: [
+          {
+            model: User,
+            as: "User",
+            attributes: ["id", "name", "email"],
+          },
+        ],
+      });
+
+      res.status(200).json({ pendingFriendships });
+    } catch (error) {
+      console.error("Error getting pending friend requests:", error);
+      next(error);
+    }
+  };
+
+  static pendingFriendships = async (req, res, next) => {
     try {
       const { id: UserId } = req.user;
 
