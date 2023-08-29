@@ -1,6 +1,7 @@
 module.exports = (err, req, res, next) => {
   const status = 500;
   const message = "Internal server error";
+  console.log(err);
 
   //!handle error sequelize
   if (err.errors) {
