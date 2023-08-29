@@ -9,6 +9,7 @@ const {
   AnswerQuiz,
   sequelize,
 } = require("../models");
+const event = require("../routers/event");
 
 module.exports = class userEventController {
   static getAllEvents = async (req, res, next) => {
@@ -66,6 +67,8 @@ module.exports = class userEventController {
           },
         ],
       });
+
+      if (!dataEvent) throw ({ name: "Data not found!" })
 
       const dataCheckpoint = await Checkpoint.findAll({
         where: { EventId: id },
@@ -163,6 +166,8 @@ module.exports = class userEventController {
   static deleteEvent = async (req, res, next) => {
     try {
       const { id } = req.params;
+      const user_event = User_Event.findByPk(id);
+      if (user_event) throw ({ name: "Data not found!" })
       await User_Event.destroy({
         where: { id },
       });

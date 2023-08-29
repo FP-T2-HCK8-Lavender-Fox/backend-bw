@@ -16,6 +16,7 @@ module.exports = class usersController {
     try {
       const { id } = req.params;
       const dataUser = await User.findByPk(id);
+      if (!dataUser) throw ({ name: "Data not found!" })
       res.status(200).json(dataUser);
     } catch (error) {
       console.log(error);

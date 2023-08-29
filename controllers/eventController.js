@@ -44,6 +44,7 @@ module.exports = class eventController {
           },
         ],
       });
+      if (!dataEvent) throw ({ name: "Data not found!" })
       const dataUsers = await User_Event.findAll({
         include: [
           {
@@ -75,6 +76,7 @@ module.exports = class eventController {
         CategoryId,
         checkpoints,
       } = req.body;
+
       if (!name) throw { name: "name is required!" };
       if (!startDate) throw { name: "startDate is required!" };
       if (!endDate) throw { name: "startDate is required!" };
