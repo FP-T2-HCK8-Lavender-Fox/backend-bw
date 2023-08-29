@@ -927,30 +927,49 @@ describe('POST /events', () => {
         test('200 - success create event', async () => {
             const response = await request(app).post('/events')
                 .set("access_token", access_token_admin)
-                .send({
-                    name: 'Test Event',
-                    startDate: '2023-09-01',
-                    endDate: '2023-09-03',
-                    active: true,
-                    description: "This is test event",
-                    amount: 100000,
-                    address: "123 Test street",
-                    lat: 123.92921,
-                    long: 12.92929,
-                    CategoryId: 1,
-                    checkpoints: [
-                        {
-                            name: "Checkpoint1"
-                        },
-                        {
-                            name: "Checkpoint2"
-                        },
-                        {
-                            name: "Checkpoint3"
-                        }
-                    ]
-                })
-            // .attach('file', 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg');
+                .field('name', 'Test Event')
+                .field('startDate', '2023-09-01')
+                .field('endDate', '2023-09-03')
+                .field('active', true)
+                .field('description', 'This is test event')
+                .field('amount', 100000)
+                .field('address', '123 Test street')
+                .field('lat', 123.92921)
+                .field('long', 12.92929)
+                .field('CategoryId', 1)
+                .field('checkpoints', JSON.stringify([
+                    {
+                        lat: 123.456789,
+                        long: -45.678901,
+                        question: "What is the capital of France?",
+                        trueAnswer: "Paris",
+                        wrongAnswerOne: "London",
+                        wrongAnswerTwo: "Berlin",
+                        name: "Checkpoint 1",
+                        EventId: 2
+                    },
+                    {
+                        lat: 122.456789,
+                        long: -45.678901,
+                        question: "What is the capital of England?",
+                        trueAnswer: "London",
+                        wrongAnswerOne: "Paris",
+                        wrongAnswerTwo: "Berlin",
+                        name: "Checkpoint 2",
+                        EventId: 2
+                    },
+                    {
+                        lat: 120.456789,
+                        long: -45.678901,
+                        question: "What is the capital of Indonesia?",
+                        trueAnswer: "Jakarta",
+                        wrongAnswerOne: "London",
+                        wrongAnswerTwo: "Berlin",
+                        name: "Checkpoint 3",
+                        EventId: 2
+                    }
+                ]))
+                .attach('pics', './data/image.png');
             expect(response.status).toBe(201);
             expect(response.body.message).toBe('event and checkpoints successfully created');
         });
@@ -967,39 +986,43 @@ describe('POST /events', () => {
         expect(response.status).toBe(401);
         expect(response.body).toHaveProperty("message", "require a valid token!");
     });
+})
 
-    // failed because name is null
-    test('should create a new event and return a success message', async () => {
-        const response = await request(app).post('/events')
-            .set("access_token", access_token_admin)
-            .send({
-                name: null,
-                startDate: '2023-09-01',
-                endDate: '2023-09-03',
-                active: true,
-                description: "This is test event",
-                amount: 100000,
-                address: "123 Test street",
-                lat: 123.92921,
-                long: 12.92929,
-                CategoryId: 1,
-                checkpoints: [
-                    {
-                        name: "Checkpoint1"
-                    },
-                    {
-                        name: "Checkpoint2"
-                    },
-                    {
-                        name: "Checkpoint3"
-                    }
-                ]
+describe('PUT /events/id', () => {
+    try {
+        test('200 - success update event', async () => {
+            const response = await request(app).put('/events/1')
+                .set("access_token", access_token_admin)
+                .send({
+                    name: "Test Event",
+                    startDate: "2023-09-01",
+                    endDate: "2023-09-03",
+                    active: true,
+                    description: "This is test event",
+                    amount: 200000,
+                    address: "Jl. street",
+                    lat: 123.92921,
+                    long: 12.92929,
+                    pics: "./data/lice-image.jpeg",
+                    CategoryId: 1
+                })
+            expect(response.status).toBe(201);
+            expect(response.body.message).toBe('event successfully edited');
+        });
+    } catch (error) {
+        console.log(error);
+    }
 
-            })
-        // .attach('file', 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg');
-        expect(response.status).toBe(201);
-        expect(response.body.message).toBe('name is required!');
-    })
+    // failed because access_token null
+    test("401 Failed to post events due to authentication problem", async () => {
+        const response = await request(app)
+            .post("/events")
+            .set("access_token", null)
+
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty("message", "require a valid token!");
+    });
+
 })
 
 // GET users
@@ -1215,6 +1238,12 @@ describe("GET /users-event/:id", () => {
             console.log(error);
         }
     });
+    test("404 - failed to get data because data not found", async () => {
+        const response = await request(app).get(`/users-event/100000`)
+            .set("access_token", access_token_user)
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty("message", "Data not found!");
+    })
 });
 
 // GET user-event by id
@@ -1260,7 +1289,7 @@ describe("GET /users-event/event/:id", () => {
 describe("GET /users-event/users/detail", () => {
     test("200 - success to get users-event by userId", async () => {
         try {
-            const response = await request(app).get(`/users-event/detail`)
+            const response = await request(app).get(`/users-event/users/detail`)
                 .set("access_token", access_token_user)
             expect(response.status).toBe(200);
             expect(response.body).toBeInstanceOf(Object);
@@ -1460,6 +1489,7 @@ describe("DELETE /leaderboards/:id", () => {
         expect(response.body).toHaveProperty("message", "require a valid token!");
     })
 })
+
 
 // DELETE events by id
 describe("DELETE /events/:id", () => {
