@@ -29,7 +29,8 @@ module.exports = class categoryController {
       if (!name) throw { name: "name is required!" };
       const newCategory = await Category.create({ name });
       res.status(201).json({
-        message: `${newCategory.name} successfully created`
+        message: `${newCategory.name} successfully created`,
+        newCategory
       });
     } catch (error) {
       console.log(error);

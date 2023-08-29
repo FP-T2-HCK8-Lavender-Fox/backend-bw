@@ -37,7 +37,8 @@ module.exports = class adminController {
         username, name, email, password
       });
       res.status(201).json({
-        message: `${dataAdmin.username} successfully registered`
+        message: `${dataAdmin.username} successfully registered`,
+        dataAdmin
       });
     } catch (error) {
       console.log(error);

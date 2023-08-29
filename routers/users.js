@@ -9,7 +9,7 @@ user
   .post('/users/register', usersController.registerUser)
   .post('/users/login', usersController.loginUser)
   .get('/users', adminAuth, usersController.getAllUsers)
-  .get('/users/detail/:id', usersAuth, usersController.getUserById) 
+  .get('/users/detail/:id', usersAuth, usersController.getUserById)
   .delete('/users/:id', adminAuth, usersController.deleteUser)
   .put('/users/:id', usersController.updateUser);
 
