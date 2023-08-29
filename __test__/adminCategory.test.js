@@ -1213,12 +1213,6 @@ describe("GET /users-event/:id", () => {
             console.log(error);
         }
     });
-    // test("404 - failed to get data because data not found", async () => {
-    //     const response = await request(app).get(`/users-event/10`)
-    //         .set("access_token", access_token_user)
-    //     expect(response.status).toBe(404);
-    //     expect(response.body).toHaveProperty("message", "Data not found!");
-    // })
 });
 
 // GET user-event by id
@@ -1415,6 +1409,23 @@ describe("POST /leaderboards/:eventId", () => {
             })
         expect(response.status).toBe(400)
         expect(response.body).toHaveProperty("message", `UserId is required!`)
+    })
+})
+
+// FRIENDSHIP
+// POST friend
+describe("POST /friends/:id", () => {
+    test("201 - success add friend", async () => {
+        const response = await request(app).post("/friends/1")
+            .set("access_token", access_token_user)
+            .send({
+                UserId: 1,
+                FriendId: 1,
+                status: "pending"
+            })
+        expect(response.status).toBe(201)
+        expect(response.body).toHaveProperty("message")
+
     })
 })
 
