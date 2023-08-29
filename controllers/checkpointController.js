@@ -70,12 +70,13 @@ module.exports = class checkpointController {
 
         const point = Math.floor((eventStart / now) * 1000000);
 
-        await userEvent.update({
-          point: null ? point : this.point + point,
-        });
 
-        await userEvent.save({ transaction: t });
-
+        await userEvent.update(
+          {
+            point: userEvent.point === null ? point : userEvent.point + point,
+          },
+          { transaction: t }
+        );
         await t.commit();
         return res.status(200).json(`User answer is true`);
       } else {
