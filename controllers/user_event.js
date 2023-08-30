@@ -9,6 +9,7 @@ const {
   AnswerQuiz,
   sequelize,
 } = require("../models");
+const { Op } = require("sequelize");
 const event = require("../routers/event");
 
 module.exports = class userEventController {
@@ -68,7 +69,7 @@ module.exports = class userEventController {
         ],
       });
 
-      if (!dataEvent) throw ({ name: "Data not found!" })
+      if (!dataEvent) throw { name: "Data not found!" };
 
       const dataCheckpoint = await Checkpoint.findAll({
         where: { EventId: id },
@@ -76,6 +77,30 @@ module.exports = class userEventController {
       res.status(200).json({ dataEvent, dataCheckpoint });
     } catch (error) {
       console.log(error);
+      next(error);
+    }
+  };
+
+  static getUserEventsByCategoryId = async (req, res, next) => {
+    try {
+      const { id } = req.user;
+      const { catId } = req.query;
+      const data = await User_Event.findAll({
+        where: {
+          UserId: id,
+        },
+        include: [
+          {
+            model: Event,
+            where: {
+              CategoryId: { [Op.col]: catId },
+              active: true,
+            },
+          },
+        ],
+      });
+      res.status(200).json(data);
+    } catch (error) {
       next(error);
     }
   };
@@ -90,10 +115,35 @@ module.exports = class userEventController {
         include: [
           {
             model: Event,
+            where: {
+              active: true,
+            },
           },
         ],
       });
       res.status(200).json(eventsOfUser);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  static getInactiveUserEventsByUserId = async (req, res, next) => {
+    try {
+      const { id } = req.user;
+      const inactiveUserEvents = await User_Event.findAll({
+        where: {
+          UserId: id,
+        },
+        include: [
+          {
+            model: Event,
+            where: {
+              active: false,
+            },
+          },
+        ],
+      });
+      res.status(200).json(inactiveUserEvents);
     } catch (error) {
       next(error);
     }
@@ -167,7 +217,7 @@ module.exports = class userEventController {
     try {
       const { id } = req.params;
       const user_event = User_Event.findByPk(id);
-      if (user_event) throw ({ name: "Data not found!" })
+      if (user_event) throw { name: "Data not found!" };
       await User_Event.destroy({
         where: { id },
       });
@@ -255,7 +305,7 @@ module.exports = class userEventController {
         { where: { EventId: id } }
       );
 
-      if (!dataEvents) throw ({ name: "Data not found!" })
+      if (!dataEvents) throw { name: "Data not found!" };
 
       const checkpointData = await Checkpoint.findAll({
         where: { EventId: dataEvents.EventId },

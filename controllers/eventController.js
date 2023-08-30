@@ -30,6 +30,29 @@ module.exports = class eventController {
     }
   };
 
+  static getAllEventsUser = async (req, res, next) => {
+    try {
+      const dataEvents = await Event.findAll({
+        where: {
+          active: true,
+        },
+        include: [
+          {
+            model: Admin,
+            attributes: { exclude: ["password"] },
+          },
+          {
+            model: Category,
+          },
+        ],
+      });
+      res.status(200).json(dataEvents);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
+
   static getEventById = async (req, res, next) => {
     try {
       const { id } = req.params;
@@ -78,6 +101,60 @@ module.exports = class eventController {
       });
       res.status(200).json({ data });
     } catch (error) {
+      next(error);
+    }
+  };
+
+  static getEventsByCategoryId = async (req, res, next) => {
+    try {
+      const { catId } = req.query;
+
+      const data = await Event.findAll({
+        where: {
+          CategoryId: catId,
+          active: true,
+        },
+        include: [
+          {
+            model: Admin,
+            attributes: { exclude: ["password"] },
+          },
+          {
+            model: Category,
+          },
+        ],
+      });
+
+      res.status(200).json({ data });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  static patchEventStatus = async (req, res, next) => {
+    const t = await sequelize.transaction();
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+
+      await Event.update(
+        {
+          active: status,
+        },
+        {
+          where: {
+            id: id,
+          },
+          transaction: t,
+        }
+      );
+
+      await t.commit();
+      res.status(200).json({
+        message: `Successfully patch status of event ${id}`,
+      });
+    } catch (error) {
+      await t.rollback();
       next(error);
     }
   };
@@ -147,7 +224,7 @@ module.exports = class eventController {
       await t.commit();
       res.status(201).json({
         message: `event and checkpoints successfully created`,
-        dataEvent
+        dataEvent,
       });
     } catch (error) {
       console.log(error);
