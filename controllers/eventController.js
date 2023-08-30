@@ -142,12 +142,13 @@ module.exports = class eventController {
         e.EventId = dataEvent.id;
         return e;
       });
-      await Checkpoint.bulkCreate(flagEventId, { transaction: t });
+      const checkpoint = await Checkpoint.bulkCreate(flagEventId, { transaction: t });
 
       await t.commit();
       res.status(201).json({
         message: `event and checkpoints successfully created`,
-        dataEvent
+        dataEvent,
+        checkpoint
       });
     } catch (error) {
       console.log(error);
