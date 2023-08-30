@@ -226,6 +226,7 @@ module.exports = class eventController {
       res.status(201).json({
         message: `event and checkpoints successfully created`,
         dataEvent,
+        checkpoint
       });
     } catch (error) {
       console.log(error);
@@ -291,6 +292,7 @@ module.exports = class eventController {
     const t = await sequelize.transaction();
     try {
       const { id } = req.params;
+
       await Checkpoint.destroy(
         {
           where: { EventId: id },

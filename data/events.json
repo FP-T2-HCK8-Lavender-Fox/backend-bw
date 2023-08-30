@@ -17,7 +17,7 @@
         "name": "Test Event1",
         "startDate": "2023-09-01",
         "endDate": "2023-09-03",
-        "active": true,
+        "active": false,
         "description": "This is a test event1",
         "amount": 200,
         "address": "123 Test Street",

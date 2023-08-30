@@ -57,7 +57,10 @@ module.exports = class leaderboardController {
         UserId,
         position
       });
-      res.status(200).json({ message: `success post user with id: ${dataLeaderboard.UserId} to leaderboard` });
+      res.status(200).json({
+        message: `success post user with id: ${dataLeaderboard.UserId} to leaderboard`,
+        dataLeaderboard
+      });
     } catch (error) {
       console.log(error);
       next(error);
