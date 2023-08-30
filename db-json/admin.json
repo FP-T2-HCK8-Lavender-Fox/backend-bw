@@ -1,0 +1,32 @@
+[
+  {
+    "username": "admin1",
+    "name": "Admin One",
+    "email": "admin1@example.com",
+    "password": "$2a$07$FHt9eu4VDsGu/DV1zLahDezS7ZUeQJ5qKs.Iks0vMbu.JsS4QXrCa"
+  },
+  {
+    "username": "admin2",
+    "name": "Admin Two",
+    "email": "admin2@example.com",
+    "password": "$2a$07$FHt9eu4VDsGu/DV1zLahDezS7ZUeQJ5qKs.Iks0vMbu.JsS4QXrCa"
+  },
+  {
+    "username": "admin3",
+    "name": "Admin Three",
+    "email": "admin3@example.com",
+    "password": "$2a$07$FHt9eu4VDsGu/DV1zLahDezS7ZUeQJ5qKs.Iks0vMbu.JsS4QXrCa"
+  },
+  {
+    "username": "admin4",
+    "name": "Admin Four",
+    "email": "admin4@example.com",
+    "password": "$2a$07$FHt9eu4VDsGu/DV1zLahDezS7ZUeQJ5qKs.Iks0vMbu.JsS4QXrCa"
+  },
+  {
+    "username": "admin5",
+    "name": "Admin Five",
+    "email": "admin5@example.com",
+    "password": "$2a$07$FHt9eu4VDsGu/DV1zLahDezS7ZUeQJ5qKs.Iks0vMbu.JsS4QXrCa"
+  }
+]

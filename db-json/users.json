@@ -1,0 +1,102 @@
+[
+  {
+    "name": "John Doe",
+    "gender": "Male",
+    "birthDate": "1990-01-01",
+    "email": "john@example.com",
+    "password": "$2a$07$FHt9eu4VDsGu/DV1zLahDezS7ZUeQJ5qKs.Iks0vMbu.JsS4QXrCa",
+    "phoneNumber": "123456789",
+    "address": "123 Main St, Jakarta",
+    "ktpId": "1234567890"
+  },
+  {
+    "name": "Jane Smith",
+    "gender": "Female",
+    "birthDate": "1985-05-15",
+    "email": "jane@example.com",
+    "password": "$2a$07$FHt9eu4VDsGu/DV1zLahDezS7ZUeQJ5qKs.Iks0vMbu.JsS4QXrCa",
+    "phoneNumber": "987654321",
+    "address": "456 Elm St, Surabaya",
+    "ktpId": "9876543210"
+  },
+  {
+    "name": "Agus Sutanto",
+    "gender": "Male",
+    "birthDate": "1988-07-10",
+    "email": "agus@example.com",
+    "password": "$2a$07$FHt9eu4VDsGu/DV1zLahDezS7ZUeQJ5qKs.Iks0vMbu.JsS4QXrCa",
+    "phoneNumber": "567890123",
+    "address": "789 Jalan Merdeka, Bandung",
+    "ktpId": "5678901230"
+  },
+  {
+    "name": "Siti Rahayu",
+    "gender": "Female",
+    "birthDate": "1995-02-28",
+    "email": "siti@example.com",
+    "password": "$2a$07$FHt9eu4VDsGu/DV1zLahDezS7ZUeQJ5qKs.Iks0vMbu.JsS4QXrCa",
+    "phoneNumber": "098765432",
+    "address": "456 Jalan Kemerdekaan, Yogyakarta",
+    "ktpId": "0987654321"
+  },
+  {
+    "name": "Budi Santoso",
+    "gender": "Male",
+    "birthDate": "1987-11-12",
+    "email": "budi@example.com",
+    "password": "$2a$07$FHt9eu4VDsGu/DV1zLahDezS7ZUeQJ5qKs.Iks0vMbu.JsS4QXrCa",
+    "phoneNumber": "654321789",
+    "address": "123 Jalan Makmur, Medan",
+    "ktpId": "6543217890"
+  },
+  {
+    "name": "Rina Wijaya",
+    "gender": "Female",
+    "birthDate": "1992-09-20",
+    "email": "rina@example.com",
+    "password": "$2a$07$FHt9eu4VDsGu/DV1zLahDezS7ZUeQJ5qKs.Iks0vMbu.JsS4QXrCa",
+    "phoneNumber": "345678901",
+    "address": "890 Jalan Sejahtera, Palembang",
+    "ktpId": "3456789012"
+  },
+  {
+    "name": "Ahmad Hidayat",
+    "gender": "Male",
+    "birthDate": "1993-04-08",
+    "email": "ahmad@example.com",
+    "password": "$2a$07$FHt9eu4VDsGu/DV1zLahDezS7ZUeQJ5qKs.Iks0vMbu.JsS4QXrCa",
+    "phoneNumber": "456789012",
+    "address": "567 Jalan Bahagia, Semarang",
+    "ktpId": "4567890123"
+  },
+  {
+    "name": "Dewi Anggraeni",
+    "gender": "Female",
+    "birthDate": "1991-12-25",
+    "email": "dewi@example.com",
+    "password": "$2a$07$FHt9eu4VDsGu/DV1zLahDezS7ZUeQJ5qKs.Iks0vMbu.JsS4QXrCa",
+    "phoneNumber": "567890123",
+    "address": "234 Jalan Indah, Denpasar",
+    "ktpId": "5678901234"
+  },
+  {
+    "name": "Eko Prasetyo",
+    "gender": "Male",
+    "birthDate": "1986-03-18",
+    "email": "eko@example.com",
+    "password": "$2a$07$FHt9eu4VDsGu/DV1zLahDezS7ZUeQJ5qKs.Iks0vMbu.JsS4QXrCa",
+    "phoneNumber": "678901234",
+    "address": "456 Jalan Harmoni, Makassar",
+    "ktpId": "6789012345"
+  },
+  {
+    "name": "Rini Suryani",
+    "gender": "Female",
+    "birthDate": "1989-08-05",
+    "email": "rini@example.com",
+    "password": "$2a$07$FHt9eu4VDsGu/DV1zLahDezS7ZUeQJ5qKs.Iks0vMbu.JsS4QXrCa",
+    "phoneNumber": "789012345",
+    "address": "567 Jalan Makmur, Surakarta",
+    "ktpId": "7890123456"
+  }
+]
