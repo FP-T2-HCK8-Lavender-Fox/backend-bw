@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for backend-bw/routers/event.js</title>
+    <title>Code coverage report for backend-bw/routers/friendship.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,7 +19,7 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">backend-bw/routers</a> event.js</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">backend-bw/routers</a> friendship.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
@@ -75,9 +75,7 @@
 <a name='L10'></a><a href='#L10'>10</a>
 <a name='L11'></a><a href='#L11'>11</a>
 <a name='L12'></a><a href='#L12'>12</a>
-<a name='L13'></a><a href='#L13'>13</a>
-<a name='L14'></a><a href='#L14'>14</a>
-<a name='L15'></a><a href='#L15'>15</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L13'></a><a href='#L13'>13</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -89,23 +87,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const express = require("express");
-const eventController = require("../controllers/eventController");
-const adminAuth = require("../middlewares/adminAuth");
-const event = express.Router();
+<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">const express = require('express');
+const usersAuth = require('../middlewares/usersAuth');
+const friendshipController = require('../controllers/friendship');
+const friendship = express.Router();
 &nbsp;
-event
-  .get("/events", eventController.getAllEvents)
-  .get("/events/detail/:id", eventController.getEventByEventId)
-  .get("/events/:id", eventController.getEventById)
-  .post("/events", adminAuth, eventController.postEvent)
-  .delete("/events/:id", adminAuth, eventController.deleteEvent)
-  .put("/events/:id", adminAuth, eventController.editEvent);
+friendship
+  .get('/friends/', usersAuth, friendshipController.getFriendLists)
+  .get('/friends/request', usersAuth, friendshipController.getFriendsToAcceptLists)
+  .delete('/friends/decline/:id', usersAuth, friendshipController.ignoreOrDeclineFriend)
+  .post('/friends/:id', usersAuth, friendshipController.addFriend)
+  .patch('/friends/:id', usersAuth, friendshipController.acceptFriend);
 &nbsp;
-module.exports = event;
-&nbsp;</pre></td></tr></table></pre>
+module.exports = friendship;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->

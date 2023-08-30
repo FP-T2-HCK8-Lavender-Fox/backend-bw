@@ -44,6 +44,7 @@ module.exports = class eventController {
           },
         ],
       });
+      if (!dataEvent) throw { name: "Data not found!" };
       const dataUsers = await User_Event.findAll({
         include: [
           {
@@ -52,11 +53,31 @@ module.exports = class eventController {
           },
         ],
         where: { EventId: id },
-        order: [['point', 'DESC']]
+        order: [["point", "DESC"]],
       });
       res.status(200).json({ dataEvent, dataUsers });
     } catch (error) {
       console.log(error);
+      next(error);
+    }
+  };
+
+  static getEventByEventId = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const data = await Event.findByPk(id, {
+        include: [
+          {
+            model: Admin,
+            attributes: { exclude: ["password"] },
+          },
+          {
+            model: Category,
+          },
+        ],
+      });
+      res.status(200).json({ data });
+    } catch (error) {
       next(error);
     }
   };
@@ -77,6 +98,7 @@ module.exports = class eventController {
         CategoryId,
         checkpoints,
       } = req.body;
+
       if (!name) throw { name: "name is required!" };
       if (!startDate) throw { name: "startDate is required!" };
       if (!endDate) throw { name: "startDate is required!" };
@@ -114,7 +136,8 @@ module.exports = class eventController {
         { transaction: t }
       );
       const newCheckpointArray = await JSON.parse(checkpoints);
-      if (newCheckpointArray.length !== 3) throw { name: "Checkpoints must 3!" };
+      if (newCheckpointArray.length !== 3)
+        throw { name: "Checkpoints must 3!" };
       const flagEventId = await newCheckpointArray.map((e) => {
         e.EventId = dataEvent.id;
         return e;
@@ -124,6 +147,7 @@ module.exports = class eventController {
       await t.commit();
       res.status(201).json({
         message: `event and checkpoints successfully created`,
+        dataEvent
       });
     } catch (error) {
       console.log(error);
@@ -189,13 +213,19 @@ module.exports = class eventController {
     const t = await sequelize.transaction();
     try {
       const { id } = req.params;
-      await Checkpoint.destroy({
-        where: { EventId: id }
-      }, { transaction: t });
+      await Checkpoint.destroy(
+        {
+          where: { EventId: id },
+        },
+        { transaction: t }
+      );
 
-      await Event.destroy({
-        where: { id },
-      }, { transaction: t });
+      await Event.destroy(
+        {
+          where: { id },
+        },
+        { transaction: t }
+      );
       await t.commit();
       res.status(200).json({ message: "event successfully deleted" });
     } catch (error) {
