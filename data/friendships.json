@@ -1,0 +1,16 @@
+{
+    "friends": [
+        {
+            "name": "user3",
+            "gender": "Male",
+            "birthDate": null,
+            "email": "user3@gmail.com",
+            "password": "$2a$07$VSZvHq/U2dlhvHrqAKIuoO0ew7K.c36tk0RyN3v2xJBOSaHeReyga",
+            "phoneNumber": null,
+            "address": null,
+            "ktpId": null,
+            "createdAt": "2023-08-30T00:33:58.507Z",
+            "updatedAt": "2023-08-30T00:33:58.507Z"
+        }
+    ]
+}

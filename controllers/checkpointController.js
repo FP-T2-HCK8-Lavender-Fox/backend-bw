@@ -79,7 +79,8 @@ module.exports = class checkpointController {
         );
         await t.commit();
         return res.status(200).json(`User answer is true`);
-      } else {
+      }
+      else {
         await AnswerQuiz.update(
           {
             trueOrFalse: false,
@@ -98,6 +99,7 @@ module.exports = class checkpointController {
       }
     } catch (error) {
       await t.rollback();
+      console.log(error, "<<<<<");
       next(error);
     }
   };
