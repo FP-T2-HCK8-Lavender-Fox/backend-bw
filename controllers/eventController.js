@@ -124,7 +124,6 @@ module.exports = class eventController {
           },
         ],
       });
-
       res.status(200).json({ data });
     } catch (error) {
       next(error);

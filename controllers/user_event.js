@@ -93,12 +93,13 @@ module.exports = class userEventController {
           {
             model: Event,
             where: {
-              CategoryId: { [Op.col]: catId },
+              CategoryId: catId,
               active: true,
             },
           },
         ],
       });
+
       res.status(200).json(data);
     } catch (error) {
       next(error);
