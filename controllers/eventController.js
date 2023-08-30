@@ -13,6 +13,26 @@ module.exports = class eventController {
   static getAllEvents = async (req, res, next) => {
     try {
       const dataEvents = await Event.findAll({
+        include: [
+          {
+            model: Admin,
+            attributes: { exclude: ["password"] },
+          },
+          {
+            model: Category,
+          },
+        ],
+      });
+      res.status(200).json(dataEvents);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
+
+  static getAllEventsUser = async (req, res, next) => {
+    try {
+      const dataEvents = await Event.findAll({
         where: {
           active: true,
         },
