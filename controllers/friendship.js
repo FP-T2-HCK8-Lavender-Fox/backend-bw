@@ -7,6 +7,9 @@ module.exports = class friendshipController {
       const { id: FriendId } = req.params;
       const { id: UserId } = req.user;
 
+      const dataUser = User.findByPk(req.params.id);
+      if (!dataUser) throw ({ name: "Data not found!" });
+
       // cek apakah pertemanan udah ada?
 
       const existingFriendship = await Friendship.findOne({
