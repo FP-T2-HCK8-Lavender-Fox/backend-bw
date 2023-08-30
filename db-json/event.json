@@ -1,0 +1,72 @@
+[
+  {
+    "name": "Music Festival",
+    "startDate": "2023-08-30T00:00:00Z",
+    "endDate": "2023-08-31T23:59:59Z",
+    "active": true,
+    "description": "A music festival featuring various artists.",
+    "amount": 0,
+    "address": "Central Park, Jakarta",
+    "lat": -6.1751,
+    "long": 106.824,
+    "pics": "music.jpg",
+    "CategoryId": 1,
+    "AdminId": 1
+  },
+  {
+    "name": "Sports Tournament",
+    "startDate": "2023-09-01T00:00:00Z",
+    "endDate": "2023-09-02T23:59:59Z",
+    "active": true,
+    "description": "A sports tournament with various games.",
+    "amount": 0,
+    "address": "Senayan Sports Complex, Jakarta",
+    "lat": -6.2279,
+    "long": 106.7973,
+    "pics": "sports.jpg",
+    "CategoryId": 2,
+    "AdminId": 2
+  },
+  {
+    "name": "Food Fair",
+    "startDate": "2023-09-03T00:00:00Z",
+    "endDate": "2023-09-04T23:59:59Z",
+    "active": true,
+    "description": "A food fair showcasing local cuisines.",
+    "amount": 0,
+    "address": "Grand Indonesia, Jakarta",
+    "lat": -6.1956,
+    "long": 106.8227,
+    "pics": "food.jpg",
+    "CategoryId": 3,
+    "AdminId": 3
+  },
+  {
+    "name": "Art Exhibition",
+    "startDate": "2023-09-05T00:00:00Z",
+    "endDate": "2023-09-06T23:59:59Z",
+    "active": true,
+    "description": "An art exhibition featuring various artworks.",
+    "amount": 0,
+    "address": "National Gallery, Jakarta",
+    "lat": -6.1814,
+    "long": 106.8226,
+    "pics": "art.jpg",
+    "CategoryId": 4,
+    "AdminId": 4
+  },
+  {
+    "name": "Tech Conference",
+    "startDate": "2023-09-07T00:00:00Z",
+    "endDate": "2023-09-08T23:59:59Z",
+    "active": true,
+    "description": "A technology conference discussing the latest trends.",
+    "amount": 0,
+    "address": "ICE BSD, Tangerang",
+    "lat": -6.2985,
+    "long": 106.6353,
+    "pics": "tech.jpg",
+    "CategoryId": 5,
+    "AdminId": 5
+  }
+]
