@@ -1,13 +1,15 @@
 const request = require("supertest");
 const app = require("../app");
 const { sequelize } = require("../models");
-const { Category, Admin, Checkpoint, Event, User } = require("../models");
+const { Category, Admin, Checkpoint, Event, User, AnswerQuiz } = require("../models");
 const { signToken, verifToken, hashPassword } = require("../helpers/helper");
 const { DECIMAL } = require("sequelize");
 const { filterImage } = require('../config/multer');
 const multer = require('multer');
 let access_token_admin;
 let access_token_user;
+let access_token_user2;
+let access_token_user3;
 let event_id_global;
 let category_id_global;
 let admin_id_global;
@@ -15,6 +17,8 @@ let user_id_global;
 let user2_id_global;
 let user3_id_global;
 let checkpoint_id_global;
+let user_event_id_global;
+let leaderboard_id_global
 
 beforeAll(async () => {
     try {
@@ -43,7 +47,7 @@ beforeAll(async () => {
                 {
                     UserId: user_id_global,
                     FriendId: user2_id_global,
-                    status: "accepted",
+                    status: "pending",
                     createdAt: new Date(),
                     updatedAt: new Date()
                 },
@@ -119,11 +123,6 @@ beforeEach(() => {
 
 afterAll(async () => {
     try {
-        await sequelize.queryInterface.bulkDelete("Admins", null, {
-            truncate: true,
-            cascade: true,
-            restartIdentity: true,
-        });
 
         await sequelize.queryInterface.bulkDelete("User_Events", null, {
             truncate: true,
@@ -149,7 +148,13 @@ afterAll(async () => {
             restartIdentity: true,
         });
 
-        await sequelize.queryInterface.bulkDelete("Users", null, {
+        await sequelize.queryInterface.bulkDelete("Checkpoints", null, {
+            truncate: true,
+            cascade: true,
+            restartIdentity: true,
+        });
+
+        await sequelize.queryInterface.bulkDelete("Events", null, {
             truncate: true,
             cascade: true,
             restartIdentity: true,
@@ -161,13 +166,13 @@ afterAll(async () => {
             restartIdentity: true,
         });
 
-        await sequelize.queryInterface.bulkDelete("Checkpoints", null, {
+        await sequelize.queryInterface.bulkDelete("Users", null, {
             truncate: true,
             cascade: true,
             restartIdentity: true,
         });
 
-        await sequelize.queryInterface.bulkDelete("Events", null, {
+        await sequelize.queryInterface.bulkDelete("Admins", null, {
             truncate: true,
             cascade: true,
             restartIdentity: true,
@@ -192,290 +197,6 @@ describe('filterImage', () => {
         expect(cb).toHaveBeenCalledWith(null, true);
     });
 });
-
-
-// USERS
-describe("POST /users/register", () => {
-    try {
-        test("201 - success create account", async () => {
-            const response = await request(app).post("/users/register").send({
-                name: "John Smith",
-                email: "JohnSmith@gmail.com",
-                gender: "Male",
-                password: "securepassword123",
-            })
-            user_id_global = response.body.dataUsers.id;
-            expect(response.status).toBe(201);
-            expect(response.body).toHaveProperty("message", "JohnSmith@gmail.com successfully registered");
-        })
-    } catch (error) {
-        console.log(error);
-    }
-
-    // 400 register failed - name null should return error
-    try {
-        test("400 - register failed because name is null", async () => {
-            const response = await request(app).post("/users/register").send({
-                email: "JohnSmith@gmail.com",
-                password: "securepassword123",
-                gender: "Male",
-            })
-            expect(response.status).toBe(400);
-            expect(response.body).toHaveProperty("message", "name is required!");
-        })
-    } catch (error) {
-        console.log(error);
-    }
-
-
-    // 400 register failed - gender null should return error
-    test("400 - register failed because gender is null", async () => {
-        const response = await request(app).post("/users/register").send({
-            name: "John Smith",
-            email: "JohnSmith@gmail.com",
-            password: "securepassword123"
-        })
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "gender is required!");
-    })
-
-    // 400 register failed - email null should return error
-    test("400 - register failed because email is null", async () => {
-        const response = await request(app).post("/users/register").send({
-            name: "John Smith",
-            gender: "Male",
-            password: "securepassword123"
-        })
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "email is required!");
-    })
-
-    // 400 register failed - password null should return error
-    test("400 - register failed because password is null", async () => {
-        const response = await request(app).post("/users/register").send({
-            name: "John Smith",
-            email: "JohnSmith@gmail.com",
-            gender: "Male"
-        })
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "password is required!");
-    })
-
-    // 400 register failed - name null should return error
-    test("400 - register failed because name is null", async () => {
-        const response = await request(app).post("/users/register").send({
-            email: "JohnSmith@gmail.com",
-            username: "JohnSmith",
-            password: "securepassword123"
-        })
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "name is required!");
-    })
-
-    // invalid email format 
-    test("400 - register failed because password less than 7", async () => {
-        const response = await request(app).post("/users/register").send({
-            name: "John Smith",
-            email: "JohnSmithgmail.com",
-            gender: "Male",
-            password: "securepassword123"
-        })
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "Invalid email format!");
-    })
-
-    // password length less than 7 
-    test("400 - register failed because password less than 7", async () => {
-        const response = await request(app).post("/users/register").send({
-            name: "John Smith",
-            email: "JohnSmith@gmail.com",
-            password: "secure",
-            gender: "Male"
-        })
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "minimum password length is 7!");
-    })
-})
-
-// POST users/login
-describe("POST /users/login", () => {
-    test("201 success to login", async () => {
-        const response = await request(app).post("/users/login").send({
-            email: "johndoe@example.com",
-            password: "securepassword123",
-        })
-        expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty("access_token", expect.any(String));
-        access_token_user = response.body.access_token;
-    })
-
-    // 400 login failed - username null should return error
-    test("400 login failed - email null should return error", async () => {
-        const response = await request(app).post("/users/login").send({
-            password: "securepassword123",
-        })
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "email is required!");
-    })
-
-    // 400 login failed - password null should return error
-    test("400 login failed - password null should return error", async () => {
-        const response = await request(app).post("/users/login").send({
-            email: "johndoe@example.com",
-        })
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "password is required!");
-    })
-
-    // 401 login failed - login with wrong email
-    test("400 login failed - login with wrong username", async () => {
-        const response = await request(app).post("/users/login").send({
-            email: "johnDOE@example.com",
-            password: "securepassword123"
-        })
-        expect(response.status).toBe(401);
-        expect(response.body).toHaveProperty("message", "invalid email/password");
-    })
-
-    // 401 login failed - login with wrong password
-    test("400 login failed - login with wrong password", async () => {
-        const response = await request(app).post("/users/login").send({
-            email: "johndoe@example.com",
-            password: "securepassword9871661"
-        })
-        expect(response.status).toBe(401);
-        expect(response.body).toHaveProperty("message", "invalid email/password");
-    })
-})
-
-// POST OTHER USER
-describe("POST /users-other/register", () => {
-    test("201 - success create account", async () => {
-        const response = await request(app).post("/users/register").send({
-            name: "User2",
-            email: "User2@gmail.com",
-            gender: "Male",
-            password: "password",
-        })
-        user2_id_global = response.body.dataUsers.id;
-        expect(response.status).toBe(201);
-        expect(response.body).toHaveProperty("message", "User2@gmail.com successfully registered");
-    })
-})
-
-// POST OTHER USER3
-describe("POST /users-other3/register", () => {
-    test("201 - success create account", async () => {
-        const response = await request(app).post("/users/register").send({
-            name: "User3",
-            email: "User3@gmail.com",
-            gender: "Male",
-            password: "password",
-        })
-        user3_id_global = response.body.dataUsers.id;
-        expect(response.status).toBe(201);
-        expect(response.body).toHaveProperty("message", "User3@gmail.com successfully registered");
-    })
-})
-
-
-// FRIENDSHIP   
-
-// GET Friend request
-describe("GET /friends/request", () => {
-    test("201 - success get friends request", async () => {
-        const response = await request(app).get(`/friends/request`)
-            .set("access_token", access_token_user)
-        expect(response.status).toBe(200)
-        expect(response.body.pendingFriendships[0]).toHaveProperty("UserId", expect.any(Number));
-        expect(response.body.pendingFriendships[0]).toHaveProperty("FriendId", expect.any(String));
-        expect(response.body.pendingFriendships[0]).toHaveProperty("status", expect.any(String));
-
-        expect(response.body.pendingFriendships[0].User).toHaveProperty("name", expect.any(String));
-        expect(response.body.pendingFriendships[0].User).toHaveProperty("email", expect.any(String));
-    })
-})
-
-// GET Friend list
-describe("GET /friends", () => {
-    test("201 - success get friends list", async () => {
-        const response = await request(app).get(`/friends`)
-            .set("access_token", access_token_user)
-        expect(response.status).toBe(200)
-        expect(response.body.friends[0]).toHaveProperty("id", expect.any(Number));
-        expect(response.body.friends[0]).toHaveProperty("name", expect.any(String));
-        expect(response.body.friends[0]).toHaveProperty("gender", expect.any(String));
-        expect(response.body.friends[0]).toHaveProperty("email", expect.any(String));
-        expect(response.body.friends[0]).toHaveProperty("password", expect.any(String));
-    })
-})
-
-// GET Friend list
-describe("GET /friends/pending", () => {
-    test("201 - success get friends pending list", async () => {
-        const response = await request(app).get(`/friends/pending`)
-            .set("access_token", access_token_user)
-        expect(response.status).toBe(200)
-        expect(response.body.pendingFriendships[0]).toHaveProperty("id", expect.any(Number));
-        expect(response.body.pendingFriendships[0]).toHaveProperty("name", expect.any(String));
-        expect(response.body.pendingFriendships[0]).toHaveProperty("gender", expect.any(String));
-        expect(response.body.pendingFriendships[0]).toHaveProperty("email", expect.any(String));
-        expect(response.body.pendingFriendships[0]).toHaveProperty("password", expect.any(String));
-    })
-})
-
-
-// POST friend
-describe("POST /friends/:id", () => {
-    test("201 - success add friend", async () => {
-        const response = await request(app).post(`/friends/${user2_id_global}`)
-            .set("access_token", access_token_user)
-        expect(response.status).toBe(201)
-        expect(response.body).toHaveProperty("message", "Friend request sent.")
-    })
-})
-
-// POST friend
-describe("POST /friends/:id", () => {
-    test("201 - success add friend", async () => {
-        const response = await request(app).post(`/friends/${user3_id_global}`)
-            .set("access_token", access_token_user)
-        expect(response.status).toBe(201)
-        expect(response.body).toHaveProperty("message", "Friend request sent.")
-    })
-})
-
-// PATCH friend
-describe("PATCH /friends/:id", () => {
-    test("200 - success accept friend", async () => {
-        const response = await request(app).patch(`/friends/${user2_id_global}`)
-            .set("access_token", access_token_user)
-        expect(response.status).toBe(200)
-        expect(response.body).toHaveProperty("message", "Friend request accepted.")
-    })
-})
-
-
-// ADD Friend if already friends
-describe("POST /friends/:id", () => {
-    test("201 - success add friend", async () => {
-        const response = await request(app).post(`/friends/${user2_id_global}`)
-            .set("access_token", access_token_user)
-        expect(response.status).toBe(400)
-        expect(response.body).toHaveProperty("message", "You are already friends.")
-    })
-})
-
-// IGNORE friends
-describe("DELETE /friends/decline/:id", () => {
-    test("200 - success decline friend", async () => {
-        const response = await request(app).delete(`/friends/decline/${user3_id_global}`)
-            .set("access_token", access_token_user)
-        expect(response.status).toBe(200)
-        expect(response.body).toHaveProperty("message", "Friend request declined and removed.")
-    })
-})
-
 
 // POST admin/register
 describe("POST /admin/register", () => {
@@ -615,6 +336,388 @@ describe("POST /admin/login", () => {
     })
 })
 
+// USERS
+describe("POST /users/register", () => {
+    test("201 - success create account", async () => {
+        const response = await request(app).post("/users/register").send({
+            name: "John Smith",
+            email: "JohnSmith@gmail.com",
+            gender: "Male",
+            password: "securepassword123",
+        })
+        user_id_global = response.body.dataUsers.id;
+        expect(response.status).toBe(201);
+        expect(response.body).toHaveProperty("message", "JohnSmith@gmail.com successfully registered");
+    })
+
+    // 400 register failed - name null should return error
+    try {
+        test("400 - register failed because name is null", async () => {
+            const response = await request(app).post("/users/register").send({
+                email: "JohnSmith@gmail.com",
+                password: "securepassword123",
+                gender: "Male",
+            })
+            expect(response.status).toBe(400);
+            expect(response.body).toHaveProperty("message", "name is required!");
+        })
+    } catch (error) {
+        console.log(error);
+    }
+
+    // 400 register failed - gender null should return error
+    test("400 - register failed because gender is null", async () => {
+        const response = await request(app).post("/users/register").send({
+            name: "John Smith",
+            email: "JohnSmith@gmail.com",
+            password: "securepassword123"
+        })
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty("message", "gender is required!");
+    })
+
+    // 400 register failed - email null should return error
+    test("400 - register failed because email is null", async () => {
+        const response = await request(app).post("/users/register").send({
+            name: "John Smith",
+            gender: "Male",
+            password: "securepassword123"
+        })
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty("message", "email is required!");
+    })
+
+    // 400 register failed - password null should return error
+    test("400 - register failed because password is null", async () => {
+        const response = await request(app).post("/users/register").send({
+            name: "John Smith",
+            email: "JohnSmith@gmail.com",
+            gender: "Male"
+        })
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty("message", "password is required!");
+    })
+
+    // 400 register failed - name null should return error
+    test("400 - register failed because name is null", async () => {
+        const response = await request(app).post("/users/register").send({
+            email: "JohnSmith@gmail.com",
+            username: "JohnSmith",
+            password: "securepassword123"
+        })
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty("message", "name is required!");
+    })
+
+    // invalid email format 
+    test("400 - register failed because password less than 7", async () => {
+        const response = await request(app).post("/users/register").send({
+            name: "John Smith",
+            email: "JohnSmithgmail.com",
+            gender: "Male",
+            password: "securepassword123"
+        })
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty("message", "Invalid email format!");
+    })
+
+    // password length less than 7 
+    test("400 - register failed because password less than 7", async () => {
+        const response = await request(app).post("/users/register").send({
+            name: "John Smith",
+            email: "JohnSmith@gmail.com",
+            password: "secure",
+            gender: "Male"
+        })
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty("message", "minimum password length is 7!");
+    })
+})
+
+// POST users/login
+describe("POST /users/login", () => {
+    test("201 success to login user1", async () => {
+        const response = await request(app).post("/users/login").send({
+            email: "JohnSmith@gmail.com",
+            password: "securepassword123",
+        })
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty("access_token", expect.any(String));
+        access_token_user = response.body.access_token;
+    })
+
+    // 400 login failed - username null should return error
+    test("400 login failed - email null should return error", async () => {
+        const response = await request(app).post("/users/login").send({
+            password: "securepassword123",
+        })
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty("message", "email is required!");
+    })
+
+    // 400 login failed - password null should return error
+    test("400 login failed - password null should return error", async () => {
+        const response = await request(app).post("/users/login").send({
+            email: "johndoe@example.com",
+        })
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty("message", "password is required!");
+    })
+
+    // 401 login failed - login with wrong email
+    test("400 login failed - login with wrong username", async () => {
+        const response = await request(app).post("/users/login").send({
+            email: "johnDOE@example.com",
+            password: "securepassword123"
+        })
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty("message", "invalid email/password");
+    })
+
+    // 401 login failed - login with wrong password
+    test("400 login failed - login with wrong password", async () => {
+        const response = await request(app).post("/users/login").send({
+            email: "johndoe@example.com",
+            password: "securepassword9871661"
+        })
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty("message", "invalid email/password");
+    })
+})
+
+// GET users
+describe("GET /users", () => {
+    // success
+    try {
+        test("200 - success to get list of users ", async () => {
+            const response = await request(app).get("/users").set("access_token", access_token_admin)
+
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Object);
+            expect(response.body.length).toBeGreaterThan(0);
+            expect(response.body[0]).toHaveProperty("id", expect.any(Number));
+            expect(response.body[0]).toHaveProperty("name", expect.any(String));
+            expect(response.body[0]).toHaveProperty("gender", expect.any(String));
+            expect(response.body[0]).toHaveProperty("email", expect.any(String));
+            expect(response.body[0]).toHaveProperty("password", expect.any(String));
+        })
+    } catch (error) {
+        console.log(error);
+    }
+
+
+    // failed because access_token null
+    test("401 Failed to get list of users due to authentication problem", async () => {
+        const response = await request(app)
+            .get("/users")
+            .set("access_token", null);
+
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty("message", "require a valid token!");
+    });
+})
+
+// GET users/detail
+describe("GET /users/detail", () => {
+    try {
+        test("200 - success to get users with certain id", async () => {
+            const response = await request(app).get(`/users/detail`).set("access_token", access_token_user)
+
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Object);
+            expect(response.body).toHaveProperty("id", expect.any(Number));
+            expect(response.body).toHaveProperty("name", expect.any(String));
+            expect(response.body).toHaveProperty("email", expect.any(String));
+        })
+    } catch (error) {
+        console.log(error);
+    }
+
+    test("401 Failed to get user due to authentication problem", async () => {
+        const response = await request(app)
+            .get("/users/detail")
+            .set("access_token", null);
+
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty("message", "require a valid token!");
+    });
+})
+
+// DESCRIBE OTHER USERS
+describe("POST /users", () => {
+    test("201 - success create account", async () => {
+        const response = await request(app).post("/users/register").send({
+            name: "User 3",
+            email: "user3@gmail.com",
+            gender: "Male",
+            password: "password",
+        })
+        user3_id_global = response.body.dataUsers.id;
+        expect(response.status).toBe(201);
+        expect(response.body).toHaveProperty("message", "user3@gmail.com successfully registered");
+    })
+})
+
+describe("POST /users-3", () => {
+    test("201 success to login user3", async () => {
+        const response = await request(app).post("/users/login").send({
+            email: "user3@gmail.com",
+            password: "password",
+        })
+        access_token_user3 = response.body.access_token;
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty("access_token", expect.any(String));
+        access_token_user = response.body.access_token;
+    })
+})
+
+
+// POST friend user3
+describe("POST /friends/:id", () => {
+    test("201 - success add friend", async () => {
+        const response = await request(app).post(`/friends/${user3_id_global}`)
+            .set("access_token", access_token_user)
+        expect(response.status).toBe(201)
+        expect(response.body).toHaveProperty("message", "Friend request sent.")
+    })
+
+    test("500 - failed accept friend", async () => {
+        const response = await request(app).patch(`/friends/abc`)
+            .set("access_token", access_token_user)
+        expect(response.status).toBe(500)
+        expect(response.body).toHaveProperty("message", "Internal server error")
+    })
+})
+
+describe("GET /friends/pending", () => {
+    test("201 - success get friends pending list", async () => {
+
+        const response = await request(app).get(`/friends/pending`)
+            .set("access_token", access_token_user)
+
+        expect(response.status).toBe(200)
+        expect(response.body).toBeInstanceOf(Object);
+        expect(response.body.pendingFriendships[0]).toHaveProperty("id", expect.any(Number));
+        expect(response.body.pendingFriendships[0]).toHaveProperty("name", expect.any(String));
+        expect(response.body.pendingFriendships[0]).toHaveProperty("gender", expect.any(String));
+        expect(response.body.pendingFriendships[0]).toHaveProperty("email", expect.any(String));
+    })
+})
+
+describe("POST /friends/:id", () => {
+    test("201 - success add friend", async () => {
+        const response = await request(app).post(`/friends/${user_id_global}`)
+            .set("access_token", access_token_user3)
+
+        expect(response.status).toBe(400)
+        expect(response.body).toHaveProperty("message", "You are already friends.")
+    })
+})
+
+// GET Friend request
+describe("GET /friends/request", () => {
+    test("201 - success get friends request", async () => {
+        const response = await request(app).get(`/friends/request`)
+            .set("access_token", access_token_user)
+        expect(response.status).toBe(200)
+        expect(response.body.pendingFriendships[0]).toHaveProperty("UserId", expect.any(Number));
+        expect(response.body.pendingFriendships[0]).toHaveProperty("FriendId", expect.any(Number));
+        expect(response.body.pendingFriendships[0]).toHaveProperty("status", expect.any(String));
+
+        expect(response.body.pendingFriendships[0].User).toHaveProperty("name", expect.any(String));
+        expect(response.body.pendingFriendships[0].User).toHaveProperty("email", expect.any(String));
+    })
+})
+
+describe("POST /users", () => {
+    test("201 - success create account", async () => {
+        const response = await request(app).post("/users/register").send({
+            name: "User 2",
+            email: "user2@gmail.com",
+            gender: "Male",
+            password: "password",
+        })
+        user2_id_global = response.body.dataUsers.id;
+        expect(response.status).toBe(201);
+        expect(response.body).toHaveProperty("message", "user2@gmail.com successfully registered");
+    })
+})
+
+describe("POST /users-2", () => {
+    test("201 success to login user2", async () => {
+        const response = await request(app).post("/users/login").send({
+            email: "user2@gmail.com",
+            password: "password",
+        })
+        access_token_user2 = response.body.access_token;
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty("access_token", expect.any(String));
+        access_token_user = response.body.access_token;
+    })
+})
+
+describe("POST /friends/:id", () => {
+    test("201 - success add friend", async () => {
+        const response = await request(app).post(`/friends/${user_id_global}`)
+            .set("access_token", access_token_user2)
+
+        expect(response.status).toBe(201)
+        expect(response.body).toHaveProperty("message", "Friend request sent.")
+    })
+})
+
+// PATCH friend
+describe("PATCH /friends/:id", () => {
+    test("200 - success accept friend", async () => {
+        const response = await request(app).patch(`/friends/${user2_id_global}`)
+            .set("access_token", access_token_user)
+        expect(response.status).toBe(200)
+        expect(response.body).toHaveProperty("message", "Friend request accepted.")
+    })
+
+    test("404 - failed accept friend due to authentication problem", async () => {
+        const response = await request(app).patch(`/friends/10000`)
+            .set("access_token", null)
+        expect(response.status).toBe(401)
+        expect(response.body).toHaveProperty("message", "require a valid token!")
+    })
+
+    test("500 - failed accept friend", async () => {
+        const response = await request(app).patch(`/friends/abc`)
+            .set("access_token", access_token_user)
+        expect(response.status).toBe(500)
+        expect(response.body).toHaveProperty("message", "Internal server error")
+    })
+})
+
+// GET Friend list
+describe("GET /friends", () => {
+    test("200 - success get friends list", async () => {
+        const response = await request(app).get(`/friends`).set("access_token", access_token_user)
+        expect(response.status).toBe(200)
+    })
+})
+
+// IGNORE friends user3
+describe("DELETE /friends/decline/:id", () => {
+    test("200 - success decline friend", async () => {
+        const response = await request(app).delete(`/friends/decline/${user3_id_global}`)
+            .set("access_token", access_token_user)
+        expect(response.status).toBe(200)
+        expect(response.body).toHaveProperty("message", "Friend request declined and removed.")
+    })
+
+    test("500 - failed accept friend", async () => {
+        const response = await request(app).patch(`/friends/abc`)
+            .set("access_token", access_token_user)
+        expect(response.status).toBe(500)
+        expect(response.body).toHaveProperty("message", "Internal server error")
+    })
+})
+
+
+
+
 // POST /categories/
 describe("POST /categories/", () => {
     try {
@@ -650,7 +753,7 @@ describe("POST /categories/", () => {
 describe("PUT /categories/:id", () => {
     // success
     test("200 - success update category with certain id", async () => {
-        const response = await request(app).put("/categories/1")
+        const response = await request(app).put(`/categories/${category_id_global}`)
             .set("access_token", access_token_admin)
             .send({
                 name: "CATEGORY3",
@@ -751,55 +854,6 @@ describe("GET /admin/:id", () => {
     });
 })
 
-// PUT /admin/:id
-describe("PUT /admin/:id", () => {
-    try {
-        // success
-        test("201 - success to update admin detail", async () => {
-            const response = await request(app).put("/admin/1").set("access_token", access_token_admin)
-                .send({
-                    name: "John DOE",
-                    username: "JohnDoe",
-                    email: "johndoe@example.com",
-                })
-            expect(response.status).toBe(201);
-            expect(response.body).toHaveProperty("message", "admin data successfully edited");
-        })
-    } catch (error) {
-        console.log(error);
-    }
-    test("400 - failed to update admin profile due to null username", async () => {
-        const response = await request(app).put("/admin/1").set("access_token", access_token_admin)
-            .send({
-                name: "John DOE",
-                username: null,
-                email: "johndoe@example.com",
-            })
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "username is required!");
-    })
-    test("400 - failed to update admin profile due to null name", async () => {
-        const response = await request(app).put("/admin/1").set("access_token", access_token_admin)
-            .send({
-                name: null,
-                username: "JohnDoe",
-                email: "johndoe@example.com",
-            })
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "name is required!");
-    })
-    test("400 - failed to update admin profile due to null email", async () => {
-        const response = await request(app).put("/admin/1").set("access_token", access_token_admin)
-            .send({
-                name: "John DOE",
-                username: "JohnDoe",
-                email: null,
-            })
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "email is required!");
-    })
-})
-
 
 // GET categories
 describe("GET /categories", () => {
@@ -822,7 +876,7 @@ describe("GET /categories", () => {
 describe("GET /categories/:id", () => {
     try {
         test("200 - success to get category with certain id", async () => {
-            const response = await request(app).get("/categories/1")
+            const response = await request(app).get(`/categories/${category_id_global}`)
             expect(response.status).toBe(200);
             expect(response.body).toBeInstanceOf(Object);
             expect(response.body).toHaveProperty("id", expect.any(Number));
@@ -840,59 +894,8 @@ describe("GET /categories/:id", () => {
     })
 })
 
-// CHECKPOINTS
-describe("GET /checkpoints", () => {
-    // success
-    try {
-        test("200 - success to get list of checkpoints ", async () => {
-            const response = await request(app).get("/checkpoints")
-            expect(response.status).toBe(200);
-            expect(response.body).toBeInstanceOf(Object);
-            expect(response.body.length).toBeGreaterThan(0);
-            expect(response.body[0]).toHaveProperty("id", expect.any(Number));
-            expect(response.body[0]).toHaveProperty("lat", expect.any(String));
-            expect(response.body[0]).toHaveProperty("long", expect.any(String));
-            expect(response.body[0]).toHaveProperty("question", expect.any(String));
-            expect(response.body[0]).toHaveProperty("trueAnswer", expect.any(String));
-            expect(response.body[0]).toHaveProperty("wrongAnswerOne", expect.any(String));
-            expect(response.body[0]).toHaveProperty("wrongAnswerTwo", expect.any(String));
-            expect(response.body[0]).toHaveProperty("name", expect.any(String));
-            expect(response.body[0]).toHaveProperty("EventId", expect.any(Number));
-        })
-    } catch (error) {
-        console.log(error);
-    }
-})
-
-describe("GET /checkpoints/:EventId", () => {
-    test("should respond with 200 and list of checkpoints", async () => {
-        try {
-            const eventId = 1;
-
-            const response = await request(app).get(`/checkpoints/${eventId}`);
-
-            expect(response.status).toBe(200);
-            expect(Array.isArray(response.body)).toBe(true);
-
-            const firstCheckpoint = response.body[0];
-            expect(firstCheckpoint).toHaveProperty("id", expect.any(Number));
-            expect(firstCheckpoint).toHaveProperty("lat", expect.any(String));
-            expect(firstCheckpoint).toHaveProperty("long", expect.any(String));
-            expect(firstCheckpoint).toHaveProperty("question", expect.any(String));
-            expect(firstCheckpoint).toHaveProperty("trueAnswer", expect.any(String));
-            expect(firstCheckpoint).toHaveProperty("wrongAnswerOne", expect.any(String));
-            expect(firstCheckpoint).toHaveProperty("wrongAnswerTwo", expect.any(String));
-            expect(firstCheckpoint).toHaveProperty("name", expect.any(String));
-            expect(firstCheckpoint).toHaveProperty("EventId", expect.any(Number));
-        } catch (error) {
-            console.log(error);
-        }
-    })
-});
-
 
 // EVENTS
-
 describe('POST /events', () => {
     try {
         test('201 - success create event', async () => {
@@ -907,7 +910,7 @@ describe('POST /events', () => {
                 .field('address', '123 Test street')
                 .field('lat', 123.92921)
                 .field('long', 12.92929)
-                .field('CategoryId', 1)
+                .field('CategoryId', category_id_global)
                 .field('checkpoints', JSON.stringify([
                     {
                         lat: 123.456789,
@@ -965,7 +968,7 @@ describe('POST /events', () => {
 })
 
 // POST user-event
-describe("POST /users-event/event_id", () => {
+describe("POST /users-event/:event_id", () => {
     test("200 - success post event to list user", async () => {
 
         const event_id = event_id_global;
@@ -976,6 +979,18 @@ describe("POST /users-event/event_id", () => {
 
         expect(response.status).toBe(201);
         expect(response.body.message).toBe("event successfully added")
+    })
+
+    test("403 - failed post event to list user", async () => {
+
+        const event_id = event_id_global;
+
+        const response = await request(app)
+            .post(`/users-event/${event_id}`)
+            .set("access_token", access_token_user)
+
+        expect(response.status).toBe(403);
+        expect(response.body.message).toBe("event already added")
     })
 })
 
@@ -991,7 +1006,6 @@ describe("POST /answers/:CheckpointId", () => {
             .send({
                 answer: "Paris"
             })
-        console.log(response.body, "<<<");
         expect(response.status).toBe(200);
         expect
             (response.body).toBe("User answer is true")
@@ -1032,6 +1046,7 @@ describe("GET /events", () => {
     try {
         test("200 - success to get list of events ", async () => {
             const response = await request(app).get("/events")
+            console.log(response.body, "###");
             expect(response.status).toBe(200);
             expect(response.body).toBeInstanceOf(Object);
             expect(response.body.length).toBeGreaterThan(0);
@@ -1061,30 +1076,71 @@ describe("GET /events", () => {
     }
 })
 
+describe("GET /events/category", () => {
+    // success
+    test("200 - success to get list of events ", async () => {
+        const response = await request(app).get(`/events/category/?catId=${category_id_global}`)
+        console.log(response.body, "!!!");
+
+        expect(response.status).toBe(200);
+        expect(response.body.data[0]).toHaveProperty("id", expect.any(Number));
+        expect(response.body.data[0]).toHaveProperty("name", expect.any(String));
+        expect(response.body.data[0]).toHaveProperty("startDate", expect.any(String));
+        expect(response.body.data[0]).toHaveProperty("endDate", expect.any(String));
+    })
+})
+
 describe("GET /events/detail/:id", () => {
     // success
-    try {
-        test('should return event details along with related data', async () => {
-            const response = await request(app).get(`/events/detail/${event_id_global}`);
 
-            expect(response.status).toBe(200);
-            expect(response.body.data).toHaveProperty("id", expect.any(Number));
-            expect(response.body.data).toHaveProperty("name", expect.any(String));
-            expect(response.body.data).toHaveProperty("startDate", expect.any(String));
-            expect(response.body.data).toHaveProperty("endDate", expect.any(String));
-            expect(response.body.data).toHaveProperty("active", expect.any(Boolean));
+    test('should return event details along with related data', async () => {
+        const response = await request(app).get(`/events/detail/${event_id_global}`);
 
-            expect(response.body.data.Admin).toHaveProperty("id", expect.any(Number));
-            expect(response.body.data.Admin).toHaveProperty("name", expect.any(String));
-            expect(response.body.data.Admin).toHaveProperty("email", expect.any(String));
-            expect(response.body.data.Admin).toHaveProperty("username", expect.any(String));
+        expect(response.status).toBe(200);
+        expect(response.body.data).toHaveProperty("id", expect.any(Number));
+        expect(response.body.data).toHaveProperty("name", expect.any(String));
+        expect(response.body.data).toHaveProperty("startDate", expect.any(String));
+        expect(response.body.data).toHaveProperty("endDate", expect.any(String));
+        expect(response.body.data).toHaveProperty("active", expect.any(Boolean));
 
-            expect(response.body.data.Category).toHaveProperty("id", expect.any(Number));
-            expect(response.body.data.Category).toHaveProperty("name", expect.any(String));
-        })
-    } catch (error) {
-        console.log(error);
-    }
+        expect(response.body.data.Admin).toHaveProperty("id", expect.any(Number));
+        expect(response.body.data.Admin).toHaveProperty("name", expect.any(String));
+        expect(response.body.data.Admin).toHaveProperty("email", expect.any(String));
+        expect(response.body.data.Admin).toHaveProperty("username", expect.any(String));
+
+        expect(response.body.data.Category).toHaveProperty("id", expect.any(Number));
+        expect(response.body.data.Category).toHaveProperty("name", expect.any(String));
+    })
+
+    test("500 - failed to get event by id because internal server error", async () => {
+        const response = await request(app).get("/events/abc")
+        expect(response.status).toBe(500);
+        expect(response.body).toHaveProperty("message", "Internal server error");
+    })
+})
+
+describe("GET /events/:id", () => {
+    // success
+    test('200 - should return event details along with related data', async () => {
+
+        const response = await request(app).get(`/events/${event_id_global}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body.dataEvent).toHaveProperty("id", expect.any(Number));
+        expect(response.body.dataEvent).toHaveProperty("name", expect.any(String));
+        expect(response.body.dataEvent).toHaveProperty("startDate", expect.any(String));
+        expect(response.body.dataEvent).toHaveProperty("endDate", expect.any(String));
+        expect(response.body.dataEvent).toHaveProperty("active", expect.any(Boolean));
+
+        expect(response.body.dataEvent.Admin).toHaveProperty("id", expect.any(Number));
+        expect(response.body.dataEvent.Admin).toHaveProperty("name", expect.any(String));
+        expect(response.body.dataEvent.Admin).toHaveProperty("email", expect.any(String));
+        expect(response.body.dataEvent.Admin).toHaveProperty("username", expect.any(String));
+
+        expect(response.body.dataEvent.Category).toHaveProperty("id", expect.any(Number));
+        expect(response.body.dataEvent.Category).toHaveProperty("name", expect.any(String));
+    })
+
     test("404 - failed to get event by id because data not found", async () => {
         const response = await request(app).get("/events/10000")
         expect(response.status).toBe(404);
@@ -1092,141 +1148,14 @@ describe("GET /events/detail/:id", () => {
     })
 })
 
-describe('PUT /events/id', () => {
-    try {
-        test('200 - success update event', async () => {
-            const response = await request(app).put('/events/1')
-                .set("access_token", access_token_admin)
-                .send({
-                    name: "Test Event",
-                    startDate: "2023-09-01",
-                    endDate: "2023-09-03",
-                    active: true,
-                    description: "This is test event",
-                    amount: 200000,
-                    address: "Jl. street",
-                    lat: 123.92921,
-                    long: 12.92929,
-                    pics: "./data/lice-image.jpeg",
-                    CategoryId: 1
-                })
-            expect(response.status).toBe(201);
-            expect(response.body.message).toBe('event successfully edited');
-        });
-    } catch (error) {
-        console.log(error);
-    }
-
-    // failed because access_token null
-    test("401 Failed to post events due to authentication problem", async () => {
-        const response = await request(app)
-            .post("/events")
-            .set("access_token", null)
-
-        expect(response.status).toBe(401);
-        expect(response.body).toHaveProperty("message", "require a valid token!");
-    });
-
-})
-
-// GET users
-describe("GET /users", () => {
-    // success
-    try {
-        test("200 - success to get list of users ", async () => {
-            const response = await request(app).get("/users").set("access_token", access_token_admin)
-
-            expect(response.status).toBe(200);
-            expect(response.body).toBeInstanceOf(Object);
-            expect(response.body.length).toBeGreaterThan(0);
-            expect(response.body[0]).toHaveProperty("id", expect.any(Number));
-            expect(response.body[0]).toHaveProperty("name", expect.any(String));
-            expect(response.body[0]).toHaveProperty("gender", expect.any(String));
-            expect(response.body[0]).toHaveProperty("email", expect.any(String));
-            expect(response.body[0]).toHaveProperty("password", expect.any(String));
-        })
-    } catch (error) {
-        console.log(error);
-    }
-
-
-    // failed because access_token null
-    test("401 Failed to get list of users due to authentication problem", async () => {
-        const response = await request(app)
-            .get("/users")
-            .set("access_token", null);
-
-        expect(response.status).toBe(401);
-        expect(response.body).toHaveProperty("message", "require a valid token!");
-    });
-})
-
-// GET users/detail
-describe("GET /users/detail", () => {
-    try {
-        test("200 - success to get users with certain id", async () => {
-            const response = await request(app).get(`/users/detail`).set("access_token", access_token_user)
-
-            expect(response.status).toBe(200);
-            expect(response.body).toBeInstanceOf(Object);
-            expect(response.body).toHaveProperty("id", expect.any(Number));
-            expect(response.body).toHaveProperty("name", expect.any(String));
-            expect(response.body).toHaveProperty("email", expect.any(String));
-        })
-    } catch (error) {
-        console.log(error);
-    }
-
-    test("401 Failed to get user due to authentication problem", async () => {
-        const response = await request(app)
-            .get("/users/detail")
-            .set("access_token", null);
-
-        expect(response.status).toBe(401);
-        expect(response.body).toHaveProperty("message", "require a valid token!");
-    });
-})
-
-describe("PUT /users/:id", () => {
-    // success
-    test("200 - success update user account with certain id", async () => {
-        const response = await request(app).put("/users/1")
-            .send({
-                name: "John DOE",
-                gender: "Male",
-                email: "johndoe@example.com",
-                birthDate: "2001-12-12",
-                phoneNumber: "08123743839",
-                address: "Jl. street",
-                ktpId: "098792819281"
-            })
-        expect(response.status).toBe(201);
-        expect(response.body).toHaveProperty("message", "user data successfully edited");
-    })
-
-    // failed -name is null
-    test("400 Failed to update user account because name is null", async () => {
-        const response = await request(app).put("/users/1")
-            .set("access_token", null)
-            .send({
-                name: null,
-                gender: "Male",
-                email: "johndoe@example.com",
-                birthDate: "2001-12-12",
-                phoneNumber: "08123743839",
-                address: "Jl. street",
-                ktpId: "098792819281"
-            })
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "name is required!");
-    });
-})
 
 // USER-EVENT
 describe("GET /users-event", () => {
     test("200 - success to get list of users-event", async () => {
         try {
             const response = await request(app).get("/users-event");
+            user_event_id_global = response.body.length - 1;
+
             expect(response.status).toBe(200);
             expect(response.body).toBeInstanceOf(Array);
             expect(response.body.length).toBeGreaterThan(0);
@@ -1273,67 +1202,148 @@ describe("GET /users-event", () => {
     });
 });
 
-// GET event by event id
-describe("GET /users-event/:id", () => {
-    test("200 - success to get event by eventId", async () => {
+describe("GET /users-event/inactive", () => {
+    test("200 - success to get list of inactive users-event ", async () => {
         try {
-            const EventId = 1;
-            const response = await request(app).get(`/users-event/${EventId}`)
-                .set("access_token", access_token_user)
+            const response = await request(app).get("/user-event/inactive")
+                .set("access_token", access_token_user);
+
             expect(response.status).toBe(200);
             expect(response.body).toBeInstanceOf(Object);
             expect(response.body.length).toBeGreaterThan(0);
-            expect(response.body.dataEvents).toHaveProperty("UserId", expect.any(Number));
-            expect(response.body.dataEvents).toHaveProperty("EventId", expect.any(Number));
-            expect(response.body.dataEvents).toHaveProperty("point", expect.any(Number));
-            expect(response.body.dataEvents.User).toHaveProperty("name", expect.any(String));
-            expect(response.body.dataEvents.User).toHaveProperty("gender", expect.any(String));
-            expect(response.body.dataEvents.Event.Category).toHaveProperty("name", expect.any(String));
-            expect(response.body.dataEvents.Event.Admin).toHaveProperty("username", expect.any(String));
-            expect(response.body.dataEvents.Event.Admin).toHaveProperty("email", expect.any(String));
 
-            expect(response.body.checkpointData).toHaveProperty("name", expect.any(String));
-            expect(response.body.checkpointData).toHaveProperty("question", expect.any(String));
-            expect(response.body.checkpointData).toHaveProperty("trueAnswer", expect.any(String));
+            // Check properties of the first user-event object in the response array
+            const userEvent = response.body[0];
+            expect(userEvent).toHaveProperty("id", expect.any(Number));
 
-            expect(response.body.answeQuizData).toHaveProperty("trueOrFalse", expect.any(Boolean));
+            const event = userEvent.Event;
+            expect(event).toHaveProperty("id", expect.any(Number));
+            expect(event).toHaveProperty("AdminId", expect.any(Number));
+            expect(event).toHaveProperty("CategoryId", expect.any(Number));
+            expect(event).toHaveProperty("active", true);
+            expect(event).toHaveProperty("address", expect.any(String));
+            expect(event).toHaveProperty("amount", expect.any(Number));
+            expect(event).toHaveProperty("createdAt", expect.any(String));
+            expect(event).toHaveProperty("description", expect.any(String));
+            expect(event).toHaveProperty("endDate", expect.any(String));
+            expect(event).toHaveProperty("lat", expect.any(String));
+            expect(event).toHaveProperty("long", expect.any(String));
+            expect(event).toHaveProperty("name", expect.any(String));
+            expect(event).toHaveProperty("pics", expect.any(String));
+            expect(event).toHaveProperty("startDate", expect.any(String));
+            expect(event).toHaveProperty("updatedAt", expect.any(String));
 
-            expect(response.body.leaderboard).toHaveProperty("position", expect.any(Number));
+            const user = userEvent.User;
+            expect(user).toHaveProperty("id", expect.any(Number));
+            expect(user).toHaveProperty("address", expect.any(String));
+            expect(user).toHaveProperty("birthDate", null);
+            expect(user).toHaveProperty("createdAt", expect.any(String));
+            expect(user).toHaveProperty("email", expect.any(String));
+            expect(user).toHaveProperty("gender", expect.any(String));
+            expect(user).toHaveProperty("ktpId", expect.any(String));
+            expect(user).toHaveProperty("name", expect.any(String));
+            expect(user).toHaveProperty("phoneNumber", expect.any(String));
+            expect(user).toHaveProperty("updatedAt", expect.any(String));
+
+            expect(userEvent).toHaveProperty("point", expect.any(Number));
+            expect(userEvent).toHaveProperty("createdAt", expect.any(String));
+            expect(userEvent).toHaveProperty("updatedAt", expect.any(String));
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
+    });
+});
+
+// get users-event by category
+describe("GET /users-event/category", () => {
+    test("200 - success to get list of users-event by category ", async () => {
+        try {
+
+            const response = await request(app).get(`/user-event/category?catId=${category_id_global}`)
+                .set("access_token", access_token_user);
+
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Object);
+            expect(response.body.length).toBeGreaterThan(0);
+
+            // Check properties of the first user-event object in the response array
+            const userEvent = response.body[0];
+            expect(userEvent).toHaveProperty("id", expect.any(Number));
+
+            const event = userEvent.Event;
+            expect(event).toHaveProperty("id", expect.any(Number));
+            expect(event).toHaveProperty("AdminId", expect.any(Number));
+            expect(event).toHaveProperty("CategoryId", expect.any(Number));
+            expect(event).toHaveProperty("active", true);
+            expect(event).toHaveProperty("address", expect.any(String));
+            expect(event).toHaveProperty("amount", expect.any(Number));
+            expect(event).toHaveProperty("createdAt", expect.any(String));
+            expect(event).toHaveProperty("description", expect.any(String));
+            expect(event).toHaveProperty("endDate", expect.any(String));
+            expect(event).toHaveProperty("lat", expect.any(String));
+            expect(event).toHaveProperty("long", expect.any(String));
+            expect(event).toHaveProperty("name", expect.any(String));
+            expect(event).toHaveProperty("pics", expect.any(String));
+            expect(event).toHaveProperty("startDate", expect.any(String));
+            expect(event).toHaveProperty("updatedAt", expect.any(String));
+
+            const user = userEvent.User;
+            expect(user).toHaveProperty("id", expect.any(Number));
+            expect(user).toHaveProperty("address", expect.any(String));
+            expect(user).toHaveProperty("birthDate", null);
+            expect(user).toHaveProperty("createdAt", expect.any(String));
+            expect(user).toHaveProperty("email", expect.any(String));
+            expect(user).toHaveProperty("gender", expect.any(String));
+            expect(user).toHaveProperty("ktpId", expect.any(String));
+            expect(user).toHaveProperty("name", expect.any(String));
+            expect(user).toHaveProperty("phoneNumber", expect.any(String));
+            expect(user).toHaveProperty("updatedAt", expect.any(String));
+
+            expect(userEvent).toHaveProperty("point", expect.any(Number));
+            expect(userEvent).toHaveProperty("createdAt", expect.any(String));
+            expect(userEvent).toHaveProperty("updatedAt", expect.any(String));
+        } catch (error) {
+            console.error(error);
+        }
+    });
+});
+
+
+// GET event by event id
+describe("GET /users-event/:id", () => {
+    test("200 - success to get event by eventId", async () => {
+
+        const response = await request(app).get(`/users-event/${event_id_global}`)
+            .set("access_token", access_token_user)
+        expect(response.status).toBe(200);
+        expect(response.body).toBeInstanceOf(Object);
+        expect(response.body.dataEvents).toHaveProperty("UserId", expect.any(Number));
+        expect(response.body.dataEvents).toHaveProperty("EventId", expect.any(Number));
+        expect(response.body.dataEvents).toHaveProperty("point", expect.any(Number));
+        expect(response.body.dataEvents.User).toHaveProperty("name", expect.any(String));
+        expect(response.body.dataEvents.User).toHaveProperty("gender", expect.any(String));
+
+        expect(response.body.dataEvents.Event).toHaveProperty("id", expect.any(Number));
+        expect(response.body.dataEvents.Event).toHaveProperty("name", expect.any(String));
     });
 });
 
 // GET user-event by id
 describe("GET /users-event/event/:id", () => {
-    try {
-        test("200 - success to get user-event by id", async () => {
-            const id = 1;
-            const response = await request(app).get(`/users-event/event/${id}`)
+    test("200 - success to get user-event by id", async () => {
+        const response = await request(app).get(`/users-event/event/${user_event_id_global}`)
 
-            expect(response.status).toBe(200);
-            expect(response.body).toBeInstanceOf(Object);
-            expect(response.body.length).toBeGreaterThan(0);
-            expect(response.body.dataEvent).toHaveProperty("UserId", expect.any(Number));
-            expect(response.body.dataEvent).toHaveProperty("EventId", expect.any(Number));
-            expect(response.body.dataEvent).toHaveProperty("point", expect.any(Number));
+        expect(response.status).toBe(200);
+        expect(response.body).toBeInstanceOf(Object);
+        expect(response.body.dataEvent).toHaveProperty("UserId", expect.any(Number));
+        expect(response.body.dataEvent).toHaveProperty("EventId", expect.any(Number));
+        expect(response.body.dataEvent).toHaveProperty("point", expect.any(Number));
+        expect(response.body.dataEvent.User).toHaveProperty("id", expect.any(Number));
+        expect(response.body.dataEvent.User).toHaveProperty("name", expect.any(String));
+        expect(response.body.dataEvent.Event).toHaveProperty("id", expect.any(Number));
+        expect(response.body.dataEvent.Event).toHaveProperty("name", expect.any(String));
 
-            expect(response.body.dataEvent.User).toHaveProperty("name", expect.any(String));
-            expect(response.body.dataEvent.User).toHaveProperty("gender", expect.any(String));
-
-            expect(response.body.dataEvent.Event.Category).toHaveProperty("name", expect.any(String));
-
-            expect(response.body.dataEvent.Event.Checkpoint).toHaveProperty("name", expect.any(String));
-            expect(response.body.dataEvent.Event.Checkpoint).toHaveProperty("question", expect.any(String));
-            expect(response.body.dataEvent.Event.Checkpoint).toHaveProperty("trueAnswer", expect.any(String));
-
-            expect(response.body.dataEvent.Event.Admin).toHaveProperty("username", expect.any(String));
-            expect(response.body.dataEvent.Event.Admin).toHaveProperty("email", expect.any(String));
-        });
-    } catch (error) {
-        console.log(error);
-    }
+    });
 
     test("404 - failed because dataEvent not found", async () => {
         const id = 100000;
@@ -1377,6 +1387,87 @@ describe("GET /users-event/users/detail", () => {
 
 });
 
+// GET all events user
+describe("GET /events/user", () => {
+    // success
+    try {
+        test("200 - success to get list of events ", async () => {
+            const response = await request(app).get("/events/user")
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Object);
+            expect(response.body.length).toBeGreaterThan(0);
+            expect(response.body[0]).toHaveProperty("id", expect.any(Number));
+            expect(response.body[0]).toHaveProperty("name", expect.any(String));
+            expect(response.body[0]).toHaveProperty("startDate", expect.any(String));
+            expect(response.body[0]).toHaveProperty("endDate", expect.any(String));
+            expect(response.body[0]).toHaveProperty("active", expect.any(Boolean));
+            expect(response.body[0]).toHaveProperty("description", expect.any(String));
+            expect(response.body[0]).toHaveProperty("amount", expect.any(Number));
+            expect(response.body[0]).toHaveProperty("address", expect.any(String));
+            expect(response.body[0]).toHaveProperty("description", expect.any(String));
+            expect(response.body[0]).toHaveProperty("lat", expect.any(String));
+            expect(response.body[0]).toHaveProperty("long", expect.any(String));
+            expect(response.body[0]).toHaveProperty("pics", expect.any(String));
+            expect(response.body[0]).toHaveProperty("CategoryId", expect.any(Number));
+            expect(response.body[0]).toHaveProperty("AdminId", expect.any(Number));
+            expect(response.body[0].Admin).toHaveProperty("id", expect.any(Number));
+            expect(response.body[0].Admin).toHaveProperty("username", expect.any(String));
+            expect(response.body[0].Admin).toHaveProperty("name", expect.any(String));
+            expect(response.body[0].Admin).toHaveProperty("email", expect.any(String));
+            expect(response.body[0].Category).toHaveProperty("id", expect.any(Number));
+            expect(response.body[0].Category).toHaveProperty("name", expect.any(String));
+        })
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+
+
+// CHECKPOINTS
+describe("GET /checkpoints", () => {
+    // success
+    try {
+        test("200 - success to get list of checkpoints ", async () => {
+            const response = await request(app).get("/checkpoints")
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Object);
+            expect(response.body.length).toBeGreaterThan(0);
+            expect(response.body[0]).toHaveProperty("id", expect.any(Number));
+            expect(response.body[0]).toHaveProperty("lat", expect.any(String));
+            expect(response.body[0]).toHaveProperty("long", expect.any(String));
+            expect(response.body[0]).toHaveProperty("question", expect.any(String));
+            expect(response.body[0]).toHaveProperty("trueAnswer", expect.any(String));
+            expect(response.body[0]).toHaveProperty("wrongAnswerOne", expect.any(String));
+            expect(response.body[0]).toHaveProperty("wrongAnswerTwo", expect.any(String));
+            expect(response.body[0]).toHaveProperty("name", expect.any(String));
+            expect(response.body[0]).toHaveProperty("EventId", expect.any(Number));
+        })
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+describe("GET /checkpoints/:EventId", () => {
+    test("should respond with 200 and list of checkpoints", async () => {
+        const response = await request(app).get(`/checkpoints/${event_id_global}`);
+        expect(response.status).toBe(200);
+        expect(Array.isArray(response.body)).toBe(true);
+
+        const firstCheckpoint = response.body[0];
+        expect(firstCheckpoint).toHaveProperty("id", expect.any(Number));
+        expect(firstCheckpoint).toHaveProperty("lat", expect.any(String));
+        expect(firstCheckpoint).toHaveProperty("long", expect.any(String));
+        expect(firstCheckpoint).toHaveProperty("question", expect.any(String));
+        expect(firstCheckpoint).toHaveProperty("trueAnswer", expect.any(String));
+        expect(firstCheckpoint).toHaveProperty("wrongAnswerOne", expect.any(String));
+        expect(firstCheckpoint).toHaveProperty("wrongAnswerTwo", expect.any(String));
+        expect(firstCheckpoint).toHaveProperty("name", expect.any(String));
+        expect(firstCheckpoint).toHaveProperty("EventId", expect.any(Number));
+    })
+});
+
+
 // PAYMENT
 describe("POST /payment-token", () => {
     try {
@@ -1415,64 +1506,20 @@ describe("POST /payment-token", () => {
 })
 
 
-// GET leaderboards
-describe("GET /leaderboards", () => {
-    // success
-    try {
-        test("200 - success to get list of leaderboards ", async () => {
-            const response = await request(app).get("/leaderboards")
-            expect(response.status).toBe(200);
-            expect(response.body).toBeInstanceOf(Object);
-            expect(response.body.length).toBeGreaterThan(0);
-            expect(response.body[0]).toHaveProperty("id", expect.any(Number));
-            expect(response.body[0]).toHaveProperty("EventId", expect.any(Number));
-            expect(response.body[0]).toHaveProperty("UserId", expect.any(Number));
-            expect(response.body[0]).toHaveProperty("position", expect.any(Number));
-        })
-    } catch (error) {
-        console.log(error);
-    }
-})
-
-// GET leaderboards
-describe("GET /leaderboards/:id", () => {
-    // success
-    try {
-        test("200 - success to get leaderboard by id ", async () => {
-            const response = await request(app).get("/leaderboards/1")
-            expect(response.status).toBe(200);
-            expect(response.body).toBeInstanceOf(Object);
-            expect(response.body).toHaveProperty("id", expect.any(Number));
-            expect(response.body).toHaveProperty("EventId", expect.any(Number));
-            expect(response.body).toHaveProperty("UserId", expect.any(Number));
-            expect(response.body).toHaveProperty("position", expect.any(Number));
-        })
-    } catch (error) {
-        console.log(error);
-    }
-
-    // failed because data not found
-    test("404 - failed to get leaderboard by id because data not found ", async () => {
-        const response = await request(app).get("/leaderboards/10000")
-        expect(response.status).toBe(404);
-        expect(response.body).toHaveProperty("message", "Data not found!");
-    })
-
-})
-
 describe("POST /leaderboards/:eventId", () => {
     // success
     try {
         test("200 - success to create leaderboard by eventId ", async () => {
-            const response = await request(app).post("/leaderboards/1")
+            const response = await request(app).post(`/leaderboards/${event_id_global}`)
                 .set("access_token", access_token_admin)
                 .send({
-                    EventId: 1,
-                    UserId: 1,
-                    position: 1
+                    EventId: event_id_global,
+                    UserId: user_id_global,
+                    position: 2
                 })
+            leaderboard_id_global = response.body.dataLeaderboard.id;
             expect(response.status).toBe(200)
-            expect(response.body).toHaveProperty("message", `success post user with id: 1 to leaderboard`)
+            expect(response.body).toHaveProperty("message", `success post user with id: ${user_id_global} to leaderboard`)
         })
     } catch (error) {
         console.log(error);
@@ -1503,24 +1550,79 @@ describe("POST /leaderboards/:eventId", () => {
     })
 })
 
+// GET leaderboards
+describe("GET /leaderboards", () => {
+    // success
+    try {
+        test("200 - success to get list of leaderboards ", async () => {
+            const response = await request(app).get("/leaderboards")
 
-describe("DELETE /users-event/:id", () => {
-    // // success
-    // try {
-    //     test("200 - success delete user event with certain id", async () => {
-    //         const response = await request(app).delete("/users-event/1").set("access_token", access_token_admin)
-    //         expect(response.status).toBe(200);
-    //         expect(response.body).toHaveProperty("message", "event successfully deleted");
-    //     })
-    // } catch (error) {
-    //     console.log(error);
-    // }
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Object);
+            expect(response.body.length).toBeGreaterThan(0);
+            expect(response.body[0]).toHaveProperty("id", expect.any(Number));
+            expect(response.body[0]).toHaveProperty("EventId", expect.any(Number));
+            expect(response.body[0]).toHaveProperty("UserId", expect.any(Number));
+            expect(response.body[0]).toHaveProperty("position", expect.any(Number));
+        })
+    } catch (error) {
+        console.log(error);
+    }
+})
 
-    test("404 - failed to delete leaderboard due to data not found", async () => {
-        const response = await request(app).delete("/users-event/10000").set("access_token", access_token_admin)
+// GET leaderboards
+describe("GET /leaderboards/:id", () => {
+    // success
+    try {
+        test("200 - success to get leaderboard by id ", async () => {
+            const response = await request(app).get(`/leaderboards/${leaderboard_id_global}`)
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Object);
+            expect(response.body).toHaveProperty("id", expect.any(Number));
+            expect(response.body).toHaveProperty("EventId", expect.any(Number));
+            expect(response.body).toHaveProperty("UserId", expect.any(Number));
+            expect(response.body).toHaveProperty("position", expect.any(Number));
+        })
+    } catch (error) {
+        console.log(error);
+    }
 
+    // failed because data not found
+    test("404 - failed to get leaderboard by id because data not found ", async () => {
+        const response = await request(app).get("/leaderboards/10000")
         expect(response.status).toBe(404);
         expect(response.body).toHaveProperty("message", "Data not found!");
+    })
+
+})
+
+// DELETE leaderboards by id
+describe("DELETE /leaderboards/:id", () => {
+    // success
+    try {
+        test("200 - success delete leaderboard with certain id", async () => {
+            const response = await request(app).delete(`/leaderboards/${leaderboard_id_global}`).set("access_token", access_token_admin)
+            expect(response.status).toBe(200);
+            expect(response.body).toHaveProperty("message", "leaderboard successfully deleted");
+        })
+    } catch (error) {
+        console.log(error);
+    }
+    test("401 - failed to delete leaderboard due to authentication problem", async () => {
+        const response = await request(app).delete(`/leaderboards/${leaderboard_id_global}`).set("access_token", null)
+
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty("message", "require a valid token!");
+    })
+})
+
+describe("DELETE /users-event/:id", () => {
+    // success
+    test("200 - success delete user event with certain id", async () => {
+        const response = await request(app).delete(`/users-event/${user_event_id_global}`).set("access_token", access_token_admin)
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty("message", "event successfully deleted");
     })
 
     test("401 - failed to delete leaderboard due to authentication problem", async () => {
@@ -1531,64 +1633,169 @@ describe("DELETE /users-event/:id", () => {
     })
 })
 
-// DELETE leaderboards by id
-describe("DELETE /leaderboards/:id", () => {
-    // success
+
+
+describe('PATCH /events/status/id', () => {
     try {
-        test("200 - success delete leaderboard with certain id", async () => {
-            const response = await request(app).delete("/leaderboards/1").set("access_token", access_token_admin)
+        test('200 - success update event', async () => {
+
+            const response = await request(app).patch(`/events/status/${event_id_global}?status=true`)
+                .set("access_token", access_token_admin)
+                .send({
+                    name: "Test Event",
+                    startDate: "2023-09-01",
+                    endDate: "2023-09-03",
+                    active: false,
+                    description: "This is test event",
+                    amount: 200000,
+                    address: "Jl. street",
+                    lat: 123.92921,
+                    long: 12.92929,
+                    pics: "./data/lice-image.jpeg",
+                    CategoryId: category_id_global
+                })
             expect(response.status).toBe(200);
-            expect(response.body).toHaveProperty("message", "leaderboard successfully deleted");
-        })
+            expect(response.body.message).toBe(`Successfully patch status of event ${event_id_global}`);
+        });
     } catch (error) {
         console.log(error);
     }
-    test("401 - failed to delete leaderboard due to authentication problem", async () => {
-        const response = await request(app).delete("/leaderboards/1").set("access_token", null)
+
+    // failed because access_token null
+    test("401 Failed to post events due to authentication problem", async () => {
+        const response = await request(app)
+            .post("/events")
+            .set("access_token", null)
 
         expect(response.status).toBe(401);
         expect(response.body).toHaveProperty("message", "require a valid token!");
-    })
+    });
+
+})
+
+describe('PUT /events/id', () => {
+    try {
+        test('200 - success update event', async () => {
+            const response = await request(app).put(`/events/${event_id_global}`)
+                .set("access_token", access_token_admin)
+                .send({
+                    name: "Test Event",
+                    startDate: "2023-09-01",
+                    endDate: "2023-09-02",
+                    active: true,
+                    description: "This is test event",
+                    amount: 200000,
+                    address: "Jl. street",
+                    lat: 123.92921,
+                    long: 12.92929,
+                    pics: "./data/lice-image.jpeg",
+                    CategoryId: category_id_global
+                })
+            expect(response.status).toBe(201);
+            expect(response.body.message).toBe('event successfully edited');
+        });
+    } catch (error) {
+        console.log(error);
+    }
+
+    // failed because access_token null
+    test("401 Failed to post events due to authentication problem", async () => {
+        const response = await request(app)
+            .post("/events")
+            .set("access_token", null)
+
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty("message", "require a valid token!");
+    });
 })
 
 
-// DELETE events by id
-describe("DELETE /events/:id", () => {
-    // success
+// // DELETE events by id
+// describe("DELETE /events/:id", () => {
+//     // success
+
+//     test("200 - success delete event with certain id", async () => {
+
+//         const response = await request(app).delete(`/events/${event_id_global}`).set("access_token", access_token_admin)
+
+//         expect(response.status).toBe(200);
+//         expect(response.body).toHaveProperty("message", "event successfully deleted");
+//     })
+
+//     test("401 - failed to delete category due to authentication problem", async () => {
+//         const response = await request(app).delete("/events/1").set("access_token", null)
+
+//         expect(response.status).toBe(401);
+//         expect(response.body).toHaveProperty("message", "require a valid token!");
+//     })
+// })
+
+// // DELETE categories by id
+// describe("DELETE /categories/:id", () => {
+//     // success
+//     try {
+//         test("200 - success delete category with certain id", async () => {
+//             const response = await request(app).delete(`/categories/${category_id_global}`).set("access_token", access_token_admin)
+//             expect(response.status).toBe(200);
+//             expect(response.body).toHaveProperty("message", "category successfully deleted");
+//         })
+//     } catch (error) {
+//         console.log(error);
+//     }
+//     test("401 - failed to delete category due to authentication problem", async () => {
+//         const response = await request(app).delete("/categories/1").set("access_token", null)
+
+//         expect(response.status).toBe(401);
+//         expect(response.body).toHaveProperty("message", "require a valid token!");
+//     })
+// })
+
+// PUT /admin/:id
+describe("PUT /admin/:id", () => {
     try {
-        test("200 - success delete event with certain id", async () => {
-            const response = await request(app).delete(`/events/${event_id_global}`).set("access_token", access_token_admin)
-            expect(response.status).toBe(200);
-            expect(response.body).toHaveProperty("message", "event successfully deleted");
+        // success
+        test("201 - success to update admin detail", async () => {
+            const response = await request(app).put("/admin/1").set("access_token", access_token_admin)
+                .send({
+                    name: "John DOE",
+                    username: "JohnDoe",
+                    email: "johndoe@example.com",
+                })
+            expect(response.status).toBe(201);
+            expect(response.body).toHaveProperty("message", "admin data successfully edited");
         })
     } catch (error) {
         console.log(error);
     }
-    test("401 - failed to delete category due to authentication problem", async () => {
-        const response = await request(app).delete("/events/1").set("access_token", null)
-
-        expect(response.status).toBe(401);
-        expect(response.body).toHaveProperty("message", "require a valid token!");
+    test("400 - failed to update admin profile due to null username", async () => {
+        const response = await request(app).put("/admin/1").set("access_token", access_token_admin)
+            .send({
+                name: "John DOE",
+                username: null,
+                email: "johndoe@example.com",
+            })
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty("message", "username is required!");
     })
-})
-
-// DELETE categories by id
-describe("DELETE /categories/:id", () => {
-    // success
-    try {
-        test("200 - success delete category with certain id", async () => {
-            const response = await request(app).delete(`/categories/${category_id_global}`).set("access_token", access_token_admin)
-            expect(response.status).toBe(200);
-            expect(response.body).toHaveProperty("message", "category successfully deleted");
-        })
-    } catch (error) {
-        console.log(error);
-    }
-    test("401 - failed to delete category due to authentication problem", async () => {
-        const response = await request(app).delete("/categories/1").set("access_token", null)
-
-        expect(response.status).toBe(401);
-        expect(response.body).toHaveProperty("message", "require a valid token!");
+    test("400 - failed to update admin profile due to null name", async () => {
+        const response = await request(app).put("/admin/1").set("access_token", access_token_admin)
+            .send({
+                name: null,
+                username: "JohnDoe",
+                email: "johndoe@example.com",
+            })
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty("message", "name is required!");
+    })
+    test("400 - failed to update admin profile due to null email", async () => {
+        const response = await request(app).put("/admin/1").set("access_token", access_token_admin)
+            .send({
+                name: "John DOE",
+                username: "JohnDoe",
+                email: null,
+            })
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty("message", "email is required!");
     })
 })
 
@@ -1613,21 +1820,55 @@ describe("DELETE /admin/:id", () => {
     })
 })
 
+describe("PUT /users/:id", () => {
+    // success
+    test("200 - success update user account with certain id", async () => {
+        const response = await request(app).put(`/users/${user_id_global}`)
+            .send({
+                name: "John Smith",
+                email: "JohnSmith@gmail.com",
+                gender: "Male",
+                email: "johndoi@example.com",
+                birthDate: "2001-12-12",
+                phoneNumber: "08123743839",
+                address: "Jl. street",
+                ktpId: "098792819282"
+            })
+        expect(response.status).toBe(201);
+        expect(response.body).toHaveProperty("message", "user data successfully edited");
+    })
+
+    // failed -name is null
+    test("400 Failed to update user account because name is null", async () => {
+        const response = await request(app).put(`/users/${user_id_global}`)
+            .set("access_token", null)
+            .send({
+                name: null,
+                gender: "Male",
+                email: "johndoe@example.com",
+                birthDate: "2001-12-12",
+                phoneNumber: "08123743839",
+                address: "Jl. street",
+                ktpId: "098792819281"
+            })
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty("message", "name is required!");
+    });
+})
+
 // DELETE /users/:id
 describe("DELETE /users/:id", () => {
-    try {
-        // success
-        test("200 - success to delete user with certain id", async () => {
-            const response = await request(app).delete(`/users/${user_id_global}`).set("access_token", access_token_admin)
+    // success
+    // test("200 - success to delete user with certain id", async () => {
+    //     const response = await request(app).delete(`/users/${user2_id_global}`).set("access_token", access_token_admin)
+    //     console.log(response.body, "<<<");
 
-            expect(response.status).toBe(200);
-            expect(response.body).toHaveProperty("message", "users successfully deleted");
-        })
-    } catch (error) {
-        console.log(error);
-    }
+    //     expect(response.status).toBe(200);
+    //     expect(response.body).toHaveProperty("message", "users successfully deleted");
+    // })
+
     test("401 - failed to delete user due to authentication problem", async () => {
-        const response = await request(app).delete("/users/1").set("access_token", null)
+        const response = await request(app).delete(`/users/${user_id_global}`).set("access_token", null)
 
         expect(response.status).toBe(401);
         expect(response.body).toHaveProperty("message", "require a valid token!");

@@ -38,7 +38,8 @@ module.exports = class friendshipController {
       });
 
       res.status(201).json({ message: "Friend request sent." });
-    } catch (error) {
+    }
+    catch (error) {
       console.error("Error adding friend:", error);
       next(error);
     }
