@@ -124,7 +124,6 @@ module.exports = class eventController {
           },
         ],
       });
-
       res.status(200).json({ data });
     } catch (error) {
       next(error);
@@ -219,12 +218,15 @@ module.exports = class eventController {
         e.EventId = dataEvent.id;
         return e;
       });
-      await Checkpoint.bulkCreate(flagEventId, { transaction: t });
+      const checkpoint = await Checkpoint.bulkCreate(flagEventId, {
+        transaction: t,
+      });
 
       await t.commit();
       res.status(201).json({
         message: `event and checkpoints successfully created`,
         dataEvent,
+        checkpoint
       });
     } catch (error) {
       console.log(error);
@@ -290,6 +292,7 @@ module.exports = class eventController {
     const t = await sequelize.transaction();
     try {
       const { id } = req.params;
+
       await Checkpoint.destroy(
         {
           where: { EventId: id },

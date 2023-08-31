@@ -1,0 +1,152 @@
+[
+  {
+    "lat": -6.1751,
+    "long": 106.824,
+    "question": "What has keys but can't open locks?",
+    "trueAnswer": "A piano",
+    "wrongAnswerOne": "A door",
+    "wrongAnswerTwo": "A phone",
+    "name": "Checkpoint 1",
+    "EventId": 1
+  },
+  {
+    "lat": -6.1751,
+    "long": 106.824,
+    "question": "What comes once in a minute, twice in a moment, but never in a thousand years?",
+    "trueAnswer": "The letter 'M'",
+    "wrongAnswerOne": "A day",
+    "wrongAnswerTwo": "A month",
+    "name": "Checkpoint 2",
+    "EventId": 1
+  },
+  {
+    "lat": -6.1751,
+    "long": 106.824,
+    "question": "I speak without a mouth and hear without ears. I have no body, but I come alive with the wind. What am I?",
+    "trueAnswer": "An echo",
+    "wrongAnswerOne": "A whistle",
+    "wrongAnswerTwo": "A voice",
+    "name": "Checkpoint 3",
+    "EventId": 1
+  },
+  {
+    "lat": -6.2279,
+    "long": 106.7973,
+    "question": "What has keys but can't open locks?",
+    "trueAnswer": "A piano",
+    "wrongAnswerOne": "A door",
+    "wrongAnswerTwo": "A phone",
+    "name": "Checkpoint 1",
+    "EventId": 2
+  },
+  {
+    "lat": -6.2279,
+    "long": 106.7973,
+    "question": "What comes once in a minute, twice in a moment, but never in a thousand years?",
+    "trueAnswer": "The letter 'M'",
+    "wrongAnswerOne": "A day",
+    "wrongAnswerTwo": "A month",
+    "name": "Checkpoint 2",
+    "EventId": 2
+  },
+  {
+    "lat": -6.2279,
+    "long": 106.7973,
+    "question": "I speak without a mouth and hear without ears. I have no body, but I come alive with the wind. What am I?",
+    "trueAnswer": "An echo",
+    "wrongAnswerOne": "A whistle",
+    "wrongAnswerTwo": "A voice",
+    "name": "Checkpoint 3",
+    "EventId": 2
+  },
+  {
+    "lat": -6.1956,
+    "long": 106.8227,
+    "question": "What has keys but can't open locks?",
+    "trueAnswer": "A piano",
+    "wrongAnswerOne": "A door",
+    "wrongAnswerTwo": "A phone",
+    "name": "Checkpoint 1",
+    "EventId": 3
+  },
+  {
+    "lat": -6.1956,
+    "long": 106.8227,
+    "question": "What comes once in a minute, twice in a moment, but never in a thousand years?",
+    "trueAnswer": "The letter 'M'",
+    "wrongAnswerOne": "A day",
+    "wrongAnswerTwo": "A month",
+    "name": "Checkpoint 2",
+    "EventId": 3
+  },
+  {
+    "lat": -6.1956,
+    "long": 106.8227,
+    "question": "I speak without a mouth and hear without ears. I have no body, but I come alive with the wind. What am I?",
+    "trueAnswer": "An echo",
+    "wrongAnswerOne": "A whistle",
+    "wrongAnswerTwo": "A voice",
+    "name": "Checkpoint 3",
+    "EventId": 3
+  },
+  {
+    "lat": -6.1814,
+    "long": 106.8226,
+    "question": "What has keys but can't open locks?",
+    "trueAnswer": "A piano",
+    "wrongAnswerOne": "A door",
+    "wrongAnswerTwo": "A phone",
+    "name": "Checkpoint 1",
+    "EventId": 4
+  },
+  {
+    "lat": -6.1814,
+    "long": 106.8226,
+    "question": "What comes once in a minute, twice in a moment, but never in a thousand years?",
+    "trueAnswer": "The letter 'M'",
+    "wrongAnswerOne": "A day",
+    "wrongAnswerTwo": "A month",
+    "name": "Checkpoint 2",
+    "EventId": 4
+  },
+  {
+    "lat": -6.1814,
+    "long": 106.8226,
+    "question": "I speak without a mouth and hear without ears. I have no body, but I come alive with the wind. What am I?",
+    "trueAnswer": "An echo",
+    "wrongAnswerOne": "A whistle",
+    "wrongAnswerTwo": "A voice",
+    "name": "Checkpoint 3",
+    "EventId": 4
+  },
+  {
+    "lat": -6.2088,
+    "long": 106.8456,
+    "question": "What has keys but can't open locks?",
+    "trueAnswer": "A piano",
+    "wrongAnswerOne": "A door",
+    "wrongAnswerTwo": "A phone",
+    "name": "Checkpoint 1",
+    "EventId": 5
+  },
+  {
+    "lat": -6.2088,
+    "long": 106.8456,
+    "question": "What comes once in a minute, twice in a moment, but never in a thousand years?",
+    "trueAnswer": "The letter 'M'",
+    "wrongAnswerOne": "A day",
+    "wrongAnswerTwo": "A month",
+    "name": "Checkpoint 2",
+    "EventId": 5
+  },
+  {
+    "lat": -6.2088,
+    "long": 106.8456,
+    "question": "I speak without a mouth and hear without ears. I have no body, but I come alive with the wind. What am I?",
+    "trueAnswer": "An echo",
+    "wrongAnswerOne": "A whistle",
+    "wrongAnswerTwo": "A voice",
+    "name": "Checkpoint 3",
+    "EventId": 5
+  }
+]

@@ -93,12 +93,13 @@ module.exports = class userEventController {
           {
             model: Event,
             where: {
-              CategoryId: { [Op.col]: catId },
+              CategoryId: catId,
               active: true,
             },
           },
         ],
       });
+
       res.status(200).json(data);
     } catch (error) {
       next(error);
@@ -176,7 +177,7 @@ module.exports = class userEventController {
           };
         });
         await AnswerQuiz.bulkCreate(answerData, { transaction: t });
-        await User_Event.create(
+        const user_event = await User_Event.create(
           {
             UserId: req.user.id,
             EventId: event_id,
@@ -199,6 +200,7 @@ module.exports = class userEventController {
         await t.commit();
         res.status(201).json({
           message: `event successfully added`,
+          user_event
         });
       } else {
         await t.commit();
@@ -217,6 +219,7 @@ module.exports = class userEventController {
     try {
       const { id } = req.params;
       const user_event = User_Event.findByPk(id);
+      // const user_event = User_Event[id]; ganti line user_event diatas dengan line ini untuk testing
       if (user_event) throw { name: "Data not found!" };
       await User_Event.destroy({
         where: { id },
